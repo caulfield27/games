@@ -1,101 +1,178 @@
 import { images } from "./constants.js"
+import { closeSettingsModal, setSettings, settings } from "./settings.js"
 
-let container = document.getElementById('cards_container')
-let queue = []
-const defaultImage = './images/question.png'
-let cards = document.getElementsByClassName('content_wrap')
-let shuffled = shuffleCards(images)
-let winCounter = 0
-let history = []
+let container = document.getElementById('cards_container');
+let queue = [];
+const defaultImage = './images/others/question.png';
+let shuffled = shuffleCards(images[0][settings['category']].slice(0, settings['amount']));
+let winCounter = 0;
+let history = [];
+let cards = document.getElementsByClassName('content_wrap');
+let timer = {
+    minutes: 1,
+    seconds: 0,
+}
 
-run()
+run();
 
-function shuffleCards(data){
-    let shuffledArr = []
-    let randomChecker = []
-    while(shuffledArr.length !== data.length){
-        
-        let randomInd = Math.floor(Math.random() * data.length)
-        if(!randomChecker.includes(randomInd)){
-            shuffledArr.push(data[randomInd])
+function setTimer() {
+    document.getElementById('minute').innerHTML = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+    document.getElementById('seconds').innerHTML = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+}
+
+function shuffleCards(data) {
+    let shuffledArr = [];
+    let randomChecker = [];
+    while (shuffledArr.length !== data.length) {
+        let randomInd = Math.floor(Math.random() * data.length);
+        if (!randomChecker.includes(randomInd)) {
+            shuffledArr.push(data[randomInd]);
         }
-
-        randomChecker.push(randomInd)
-        
-               
+        randomChecker.push(randomInd);
     }
 
-    return shuffledArr
+    return shuffledArr;
 }
 
 function addListenerToCards() {
     for (let i = 0; i < cards.length; i++) {
         cards[i].addEventListener('click', () => {
-            if(queue.length === 2 || history.includes(i)){
-                return
-            }else{
-                play(i)
+            if (queue.length === 2 || history.includes(i) ||
+                modalActive || cards[i].classList.contains('active')) {
+                return;
+            } else {
+                play(i);
             }
         })
     }
 }
 
+function displayCards() {
+
+    container.innerHTML = `
+        <div class="start_play_wrapper">
+            <button class="start_play_btn">
+                play
+            </button>
+        </div>
+        ${shuffled.map((image) =>
+            `<div class="card">
+                <div class="content_wrap">
+                    <img src="${defaultImage}" class="img front" />
+                    <img src="${image.src}" class="img back" />
+                </div>
+            </div>`
+        ).join('')}`;
+
+
+}
+
+
 function play(i) {
     cards[i].classList.add('active');
-    
-    if(queue.length < 2){
+
+    if (queue.length < 2) {
         queue.push({ src: cards[i].children[1].src, ind: i });
     }
 
     if (queue.length === 2) {
 
-        
+
         if (queue[0].src !== queue[1].src) {
             setTimeout(() => {
-                cards[queue[0].ind].classList.remove('active')
-                cards[queue[1].ind].classList.remove('active')
+                cards[queue[0].ind].classList.remove('active');
+                cards[queue[1].ind].classList.remove('active');
                 queue = []
             }, 500)
-        } else {            
-            winCounter++
-            history.push(queue[0].ind,queue[1].ind)
-            queue = []
+        } else {
+            winCounter++;
+            history.push(queue[0].ind, queue[1].ind);
+            queue = [];
         }
 
     }
 
-    if(winCounter === (shuffled.length / 2)){
-        setTimeout(()=>{
-            let isConfirmed = confirm('Поздравляю! вы выиграли, хотите сыграть ещё?')
-            if(isConfirmed){
-                restart()
+    if (winCounter === (shuffled.length / 2)) {
+        winCounter = 0;
+        setTimeout(() => {
+            let isConfirmed = confirm('Поздравляю! вы выиграли, хотите сыграть ещё?');
+            if (isConfirmed) {
+                restart();
             }
-            
-        },500)  
+
+        }, 500);
     }
-    
-
-
 }
 
-function displayCards() {
-    container.innerHTML = shuffled.map((image) =>
-        `<div class="card">
-            <div class="content_wrap">
-                <img src="${defaultImage}" class="front"/>
-                <img src="${image.src}" class="back"/>
-            </div>       
-        </div>    
-        `
-    ).join('')
+
+export function restart() {
+    window.location.reload();
 }
 
-export function restart(){
-    window.location.reload()
-}
+document.getElementById('save-btn').addEventListener('click', () => {
+    let newSettings = setSettings();
+    localStorage.setItem('settings', JSON.stringify(newSettings));
+    let storageSettings = JSON.parse(localStorage.getItem('settings'));
+    shuffled = shuffleCards(images[0][storageSettings['category']].slice(0, storageSettings['amount']));
+    displayCards();
+    addListenerToCards();
+    closeSettingsModal();
+    setContainer(shuffled);
 
+})
+
+function setContainer(array) {
+    let appContainter = document.getElementById('app_container');
+    let cards;
+    let images;
+
+    if (array.length > 16) {
+        container.style.gridTemplateColumns = "repeat(10, 120px)";
+        container.style.gap = "20px"
+        appContainter.style.maxWidth = 'none';
+        appContainter.style.padding = '35px'
+        setTimeout(() => {
+            cards = document.getElementsByClassName('card');
+            images = document.getElementsByClassName('img');
+
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].style.width = '120px';
+                cards[i].style.height = '120px';
+            }
+
+            for (let i = 0; i < images.length; i++) {
+                images[i].style.top = '8px';
+                images[i].style.left = '4px';
+            }
+
+        }, 0)
+    } else {
+        appContainter.style.maxWidth = '1000px';
+        container.style.gridTemplateColumns = "repeat(5,135px)";
+        container.style.gap = "20px";
+        setTimeout(() => {
+            cards = document.getElementsByClassName('card');
+            images = document.getElementsByClassName('img');
+
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].style.width = '135px';
+                cards[i].style.height = '125px';
+            }
+
+            for (let i = 0; i < images.length; i++) {
+                images[i].style.top = '10px';
+                images[i].style.left = '5px';
+            }
+
+        }, 0)
+
+
+    }
+}
 
 function run() {
-    displayCards()
-    addListenerToCards()
+    displayCards();
+    addListenerToCards();
+    setContainer(shuffled);
+    setTimer()
 }

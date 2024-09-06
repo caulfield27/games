@@ -13,10 +13,16 @@ html {
     font-weight: 400;
     font-style: normal;
     letter-spacing: 5px;
+    color: white;
+}
+
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
 #app_container {
-    max-width: 1000px;
     margin: auto;
 }
 
@@ -26,23 +32,28 @@ html {
     justify-content: center;
     gap: 50px;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 10px;
 }
 
-.header h1{
+.header h1 {
     color: rgb(80, 63, 234);
 }
 
 #cards_container {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(4, 150px);
-    grid-template-rows: repeat(3, 150px);
+    background: brown;
+    grid-template-columns: repeat(5, 150px);
+    grid-template-rows: repeat(2, 150px);
     gap: 45px;
-    align-items: center;
+    align-content: center;
     justify-content: center;
-    margin-top: 40px;
-
+    margin-top: 20px;
+    padding: 40px;
+    border-radius: 8px;
+    border: 12px solid rgb(255, 255, 2);
 }
+
 
 .card {
     perspective: 1000px;
@@ -53,6 +64,8 @@ html {
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
     width: 150px;
     height: 150px;
+    cursor: pointer;
+    background: white;
 }
 
 
@@ -84,53 +97,178 @@ html {
     transform: rotateY(180deg);
 }
 
-.buttons_wrap{
+.buttons_wrap {
     display: flex;
     flex-direction: row;
     gap: 25px;
 }
 
-.buttons_wrap img{
+.buttons_wrap img {
     width: 36px;
 }
 
-.buttons_wrap button{
+.buttons_wrap button {
     background: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
     transition: all 0.2s linear;
 }
 
-.buttons_wrap button:hover{
+.buttons_wrap button:hover {
     scale: 0.96;
 }
 
-.settings_modal{
+.settings_modal {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate( -50%, -50%);
-    width: 300px;
-    height: 450px;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    height: fit-content;
     background: rgb(85, 53, 16);
     border-radius: 12px;
     z-index: 99;
     padding: 15px;
 }
 
-.display_none{
+.display_none {
     display: none;
 }
 
-.modal_header{
+.modal_header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
-.modal_header button{
+.modal_header h2 {
+    color: gainsboro;
+}
+
+.modal_header button {
+    background: transparent;
+    font-size: 24px;
+    color: gainsboro;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_content hr {
+    border: 1px solid goldenrod;
+    margin: 10px 0 10px 0;
+}
+
+.modal_body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    font-family: 'roboto', sans-serif;
+    letter-spacing: 1px;
+    color: rgb(240, 188, 56);
+    font-weight: 600;
+    margin: 20px 0 20px 0;
+
+}
+
+.setting_wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 100px;
+}
+
+.setting_wrap select {
+    background: gainsboro;
     border: none;
-    outline: none;
-    background: transparent;    
+    outline: brown;
+    padding: 5px 8px;
+    border-radius: 8px;
+}
+
+.modal_footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal_footer button {
+    background: gainsboro;
+    padding: 8px 24px;
+    font-family: "New Amsterdam", sans-serif;
+    letter-spacing: 3px;
+    border-radius: 12px;
+    transition: all 0.4s ease-in-out;
+}
+
+.modal_footer button:hover {
+    background: yellow;
+    scale: 0.98;
+}
+
+.timer {
+    position: fixed;
+    top: 22px;
+    left: 50px;
+    width: 200px;
+    height: 100px;
+    background: black;
+    background: rgb(4, 11, 216);
+    border: 5px solid lightblue;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+}
+
+.left_stick {
+    position: fixed;
+    top: 0;
+    left: 100px;
+    width: 10px;
+    height: 22px;
+    background: lightblue;
+}
+
+.right_stick {
+    position: fixed;
+    top: 0;
+    left: 200px;
+    width: 10px;
+    height: 22px;
+    background: lightblue;
+
+
+}
+
+.timer span {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 50px;
+    color: rgb(238, 250, 253);
+}
+
+.start_play_wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: blue;
+    z-index: 99;
+}
+
+.start_play_btn{
+    width: 100px;
+    height: 50px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 42px;
+    color: black;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 5px 20px 5px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

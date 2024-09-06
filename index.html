@@ -9,20 +9,53 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <div class="left_stick"></div>
+    <div class="right_stick"></div>
+    <div class="timer" id="timer">
+        <span id="minute"></span><span>:</span><span id="seconds"></span>
+    </div>
     <div id="modal" class="display_none">
         <div class="modal_content">
             <header class="modal_header">
                 <h2>Settings</h2>
-                <button>&#10006;</button>
+                <button id="close-btn">&#10006;</button>
             </header>
+            <hr>
             <main class="modal_body">
-
+                <div class="setting_wrap">
+                    <span>level</span>
+                    <select name="level" id="level">
+                        <option value="easy">easy</option>
+                        <option value="medium">medium</option>
+                        <option value="hard">hard</option>
+                    </select>
+                </div>
+                <div class="setting_wrap">
+                    <span>acount</span>
+                    <select name="amount" id="amount">
+                        <option value="10">10</option>
+                        <option value="16">16</option>
+                        <option value="20">20</option>
+                        <option value="32">32</option>
+                    </select>
+                </div>
+                <div class="setting_wrap">
+                    <span>category</span>
+                    <select name="category" id="category">
+                        <option value="humo">humo</option>
+                        <option value="cars">cars</option>
+                    </select>
+                </div>
             </main>
+            <hr>
             <footer class="modal_footer">
-
+                <button id="save-btn">save</button>
             </footer>
         </div>
     </div>
@@ -31,20 +64,21 @@
             <h1>Memory Game</h1>
             <div class="buttons_wrap">
                 <button id="settings">
-                    <img src="./images/settings.png" alt="">
+                    <img src="./images/others/settings.png" alt="">
                 </button>
                 <button id="restart">
-                    <img src="./images/restart.png" alt="">
-                    
+                    <img src="./images/others/restart.png" alt="">
+
                 </button>
             </div>
         </header>
-        <div id="cards_container"></div>
+        <div id="cards_container">
+        </div>
     </div>
 
     <script src="/scripts/main.js" type="module"></script>
-    <script src="/scripts/constants.js" type="module"></script>
     <script src="/scripts/settings.js" type="module"></script>
+    <script src="/scripts/constants.js" type="module"></script>
 </body>
 
 </html>
