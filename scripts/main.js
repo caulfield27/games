@@ -8,17 +8,8 @@ let shuffled = shuffleCards(images[0][settings['category']].slice(0, settings['a
 let winCounter = 0;
 let history = [];
 let cards = document.getElementsByClassName('content_wrap');
-let timer = {
-    minutes: 1,
-    seconds: 0,
-}
 
 run();
-
-function setTimer() {
-    document.getElementById('minute').innerHTML = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-    document.getElementById('seconds').innerHTML = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
-}
 
 function shuffleCards(data) {
     let shuffledArr = [];
@@ -50,11 +41,6 @@ function addListenerToCards() {
 function displayCards() {
 
     container.innerHTML = `
-        <div class="start_play_wrapper">
-            <button class="start_play_btn">
-                play
-            </button>
-        </div>
         ${shuffled.map((image) =>
             `<div class="card">
                 <div class="content_wrap">
@@ -174,5 +160,4 @@ function run() {
     displayCards();
     addListenerToCards();
     setContainer(shuffled);
-    setTimer()
 }

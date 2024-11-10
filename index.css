@@ -41,10 +41,10 @@ button {
 
 #cards_container {
     position: relative;
-    display: grid;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     background: brown;
-    grid-template-columns: repeat(5, 150px);
-    grid-template-rows: repeat(2, 150px);
     gap: 45px;
     align-content: center;
     justify-content: center;
@@ -205,22 +205,6 @@ button {
     scale: 0.98;
 }
 
-.timer {
-    position: fixed;
-    top: 22px;
-    left: 50px;
-    width: 200px;
-    height: 100px;
-    background: black;
-    background: rgb(4, 11, 216);
-    border: 5px solid lightblue;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: row;
-    justify-content:center;
-    align-items: center;
-}
-
 .left_stick {
     position: fixed;
     top: 0;
@@ -241,13 +225,7 @@ button {
 
 }
 
-.timer span {
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 50px;
-    color: rgb(238, 250, 253);
-}
+
 
 .start_play_wrapper{
     position: absolute;

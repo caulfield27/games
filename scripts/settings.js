@@ -16,8 +16,7 @@ export function setSettings(){
     let newSettinsg = {};
     for(let key in settings){
         newSettinsg[key] = document.getElementById(key).value;
-    }
-
+    }    
     return newSettinsg;
 }
 
