@@ -98,13 +98,11 @@ export function restart() {
 document.getElementById('save-btn').addEventListener('click', () => {
     let newSettings = setSettings();
     localStorage.setItem('settings', JSON.stringify(newSettings));
-    let storageSettings = JSON.parse(localStorage.getItem('settings'));
-    shuffled = shuffleCards(images[0][storageSettings['category']].slice(0, storageSettings['amount']));
+    shuffled = shuffleCards(images[0][newSettings['category']].slice(0, newSettings['amount']));
     displayCards();
     addListenerToCards();
     closeSettingsModal();
     setContainer(shuffled);
-
 })
 
 function setContainer(array) {

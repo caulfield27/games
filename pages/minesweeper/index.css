@@ -1,0 +1,26 @@
+.mainsweeper_wrapper{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mainsweeper_container{
+    display: grid;
+    grid-template-rows: repeat(9, 50px);
+    grid-template-columns: repeat(8,50px);
+}
+
+.odd_btn, .even_btn{
+    border: none;
+    outline: none;
+}
+
+.odd_btn{
+    background-color: rgb(50, 180, 50);
+}
+
+.even_btn{
+    background-color: rgb(90, 209, 90);
+}
