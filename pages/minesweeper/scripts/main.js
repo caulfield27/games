@@ -41,10 +41,10 @@ function setField() {
   buttons.forEach((button, buttonInd) => {
     button.addEventListener("click", (event) => {
       if (fields[buttonInd].isOpen) return;
-      
-      if(fields[buttonInd].isMine){
+
+      if (fields[buttonInd].isMine) {
         gameOver();
-        return
+        return;
       }
 
       if (!isGameStart) {
@@ -76,31 +76,89 @@ function setField() {
 function checkField(i, buttons) {
   buttons[i].style.background = buttons[i].className == "odd_btn" ? "#f0af83" : "#ffc6a0";
   fields[i].isOpen = true;
-  const neighbours = [
-    i - 1,
-    i + 1,
-    i - rows,
-    i + rows,
-    i - rows + 1,
-    i - rows - 1,
-    i + rows - 1,
-    i + rows + 1,
-  ];
+  const { edgeCase } = fields[i];
+  let neighbours = null;
+
+  switch (edgeCase) {
+    case 1:
+      neighbours = [
+        i + 1,
+        i - rows,
+        i + rows,
+        i - rows + 1,
+        i + rows + 1,
+      ];
+      break;
+    case 2:
+      neighbours = [
+        i - 1,
+        i - rows,
+        i + rows,
+        i - rows - 1,
+        i + rows - 1,
+      ];
+      break;
+    case 3:
+      neighbours = [
+        i + 1,
+        i + rows,
+        i + rows + 1,
+      ];
+      break;
+    case 4:
+      neighbours = [
+        i - 1,
+        i + rows,
+        i + rows - 1
+      ];
+      break;
+    case 5:
+      neighbours = [
+        i + 1,
+        i - rows,
+        i - rows + 1
+      ];
+      break;
+    case 6:
+      neighbours = [
+        i - 1,
+        i - rows,
+        i - rows - 1
+      ];
+      break;
+    case 7:
+      neighbours = [
+        i + 1,
+        i - 1,
+        i - rows,
+        i + rows,
+        i - rows + 1,
+        i - rows - 1,
+        i + rows + 1,
+        i + rows - 1
+      ];
+      break;
+    default:
+      neighbours = [];
+      break;
+  }
 
   let counter = 0;
   const validNeighbours = [];
   for (const neighbour of neighbours) {
-    if (buttons[neighbour]) {
+    if(buttons[neighbour]){
       validNeighbours.push(neighbour);
-      if (fields[neighbour].isMine) {
+      if (fields[neighbour]?.isMine) {
         counter++;
       }
     }
   }
 
+
+
   if (counter === 0) {
     for (const neighbour of validNeighbours) {
-      if (fields[neighbour].isMine || fields[neighbour].isOpen || fields[neighbour].isFlaged){
+      if (fields[neighbour]?.isMine || fields[neighbour]?.isOpen || fields[neighbour]?.isFlaged) {
         continue
       };
       const minesAround = checkField(neighbour, buttons);
@@ -126,18 +184,19 @@ function checkField(i, buttons) {
   }
 }
 
+
 function gameOver() {
   alert("Вы проиграли!");
   container.childNodes.forEach((child, ind) => {
     child.style.background = child.className == "odd_btn" ? "#f0af83" : "#ffc6a0";
     fields[ind].isOpen = true;
     if (fields[ind].isMine) {
-      child.innerHTML = drowMine();
+      child.innerHTML = drawMine();
     }
   });
 }
 
-function drowMine() {
+function drawMine() {
   return `<svg
     width="30" height="30"
     viewBox="0 0 100 100"
