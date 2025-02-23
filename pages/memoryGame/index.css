@@ -208,23 +208,3 @@ button {
     background: yellow;
     scale: 0.98;
 }
-
-.left_stick {
-    position: fixed;
-    top: 0;
-    left: 100px;
-    width: 10px;
-    height: 22px;
-    background: lightblue;
-}
-
-.right_stick {
-    position: fixed;
-    top: 0;
-    left: 200px;
-    width: 10px;
-    height: 22px;
-    background: lightblue;
-
-
-}
