@@ -39,8 +39,19 @@ function setField() {
   container.innerHTML = generateFields(fields.length, rows);
   const buttons = container.childNodes;
   buttons.forEach((button, buttonInd) => {
+    button.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      if (fields[buttonInd].isFlaged) {
+        buttons[buttonInd].innerHTML = "";
+        fields[buttonInd].isFlaged = false;
+      } else {
+        buttons[buttonInd].innerHTML = drawFlag();
+        fields[buttonInd].isFlaged = true;
+      }
+    });
+
     button.addEventListener("click", (event) => {
-      if (fields[buttonInd].isOpen) return;
+      if (fields[buttonInd].isOpen || fields[buttonInd].isFlaged) return;
 
       if (fields[buttonInd].isMine) {
         gameOver();
@@ -81,50 +92,22 @@ function checkField(i, buttons) {
 
   switch (edgeCase) {
     case 1:
-      neighbours = [
-        i + 1,
-        i - rows,
-        i + rows,
-        i - rows + 1,
-        i + rows + 1,
-      ];
+      neighbours = [i + 1, i - rows, i + rows, i - rows + 1, i + rows + 1];
       break;
     case 2:
-      neighbours = [
-        i - 1,
-        i - rows,
-        i + rows,
-        i - rows - 1,
-        i + rows - 1,
-      ];
+      neighbours = [i - 1, i - rows, i + rows, i - rows - 1, i + rows - 1];
       break;
     case 3:
-      neighbours = [
-        i + 1,
-        i + rows,
-        i + rows + 1,
-      ];
+      neighbours = [i + 1, i + rows, i + rows + 1];
       break;
     case 4:
-      neighbours = [
-        i - 1,
-        i + rows,
-        i + rows - 1
-      ];
+      neighbours = [i - 1, i + rows, i + rows - 1];
       break;
     case 5:
-      neighbours = [
-        i + 1,
-        i - rows,
-        i - rows + 1
-      ];
+      neighbours = [i + 1, i - rows, i - rows + 1];
       break;
     case 6:
-      neighbours = [
-        i - 1,
-        i - rows,
-        i - rows - 1
-      ];
+      neighbours = [i - 1, i - rows, i - rows - 1];
       break;
     case 7:
       neighbours = [
@@ -135,7 +118,7 @@ function checkField(i, buttons) {
         i - rows + 1,
         i - rows - 1,
         i + rows + 1,
-        i + rows - 1
+        i + rows - 1,
       ];
       break;
     default:
@@ -146,7 +129,7 @@ function checkField(i, buttons) {
   let counter = 0;
   const validNeighbours = [];
   for (const neighbour of neighbours) {
-    if(buttons[neighbour]){
+    if (buttons[neighbour]) {
       validNeighbours.push(neighbour);
       if (fields[neighbour]?.isMine) {
         counter++;
@@ -154,13 +137,11 @@ function checkField(i, buttons) {
     }
   }
 
-
-
   if (counter === 0) {
     for (const neighbour of validNeighbours) {
       if (fields[neighbour]?.isMine || fields[neighbour]?.isOpen || fields[neighbour]?.isFlaged) {
-        continue
-      };
+        continue;
+      }
       const minesAround = checkField(neighbour, buttons);
       if (minesAround) {
         buttons[neighbour].innerHTML = minesAround;
@@ -183,7 +164,6 @@ function checkField(i, buttons) {
     return counter;
   }
 }
-
 
 function gameOver() {
   alert("Вы проиграли!");
@@ -216,6 +196,14 @@ function drawMine() {
     <line x1="20" y1="80" x2="35" y2="65" stroke="black" stroke-width="5" />
 </svg>
 `;
+}
+
+function drawFlag() {
+  return `<svg width="30" height="30" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+            <rect x="22" y="5" width="4" height="35" fill="black"/>
+            <polygon points="26,8 40,15 26,22" fill="red"/>
+            <rect x="15" y="40" width="20" height="5" fill="black"/>
+          </svg>`;
 }
 
 function render() {
