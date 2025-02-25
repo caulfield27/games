@@ -5,19 +5,10 @@ const rows = 8;
 const container = document.getElementById("container");
 render();
 
-function generateFields(filedsAmount, rowLength) {
+function generateFields(filedsAmount) {
   let html = "";
-  let even = "even_btn";
-  let odd = "odd_btn";
-  let rowCounter = 0;
   for (let i = 0; i < filedsAmount; i++) {
-    html += `<button class=${i % 2 == 0 ? even : odd} value="${i}"></button>`;
-    if (rowCounter == rowLength - 1) {
-      [even, odd] = [odd, even];
-      rowCounter = 0;
-      continue;
-    }
-    rowCounter++;
+    html += `<button class="field" value="${i}"></button>`;
   }
 
   return html;
@@ -36,7 +27,7 @@ function generateMines(firstInd) {
 }
 
 function setField() {
-  container.innerHTML = generateFields(fields.length, rows);
+  container.innerHTML = generateFields(fields.length);
   const buttons = container.childNodes;
   buttons.forEach((button, buttonInd) => {
     button.addEventListener("contextmenu", (e) => {
@@ -68,16 +59,17 @@ function setField() {
         buttons[buttonInd].innerHTML = minesAround;
         switch (minesAround) {
           case 1:
-            buttons[buttonInd].style.color = "blue";
+          case 1:
+            buttons[buttonInd].style.color = "#0B24FB";
             break;
           case 2:
-            buttons[buttonInd].style.color = "yellow";
+            buttons[buttonInd].style.color = "#0E7A11";
             break;
           case 3:
-            buttons[buttonInd].style.color = "orange";
+            buttons[buttonInd].style.color = "#852123";
             break;
           default:
-            buttons[buttonInd].style.color = "red";
+            buttons[button].style.color = "#FC0D1B";
         }
       }
     });
@@ -85,7 +77,7 @@ function setField() {
 }
 
 function checkField(i, buttons) {
-  buttons[i].style.background = buttons[i].className == "odd_btn" ? "#f0af83" : "#ffc6a0";
+  buttons[i].classList.add("open_field");
   fields[i].isOpen = true;
   const { edgeCase } = fields[i];
   let neighbours = null;
@@ -147,16 +139,16 @@ function checkField(i, buttons) {
         buttons[neighbour].innerHTML = minesAround;
         switch (minesAround) {
           case 1:
-            buttons[neighbour].style.color = "blue";
+            buttons[neighbour].style.color = "#0B24FB";
             break;
           case 2:
-            buttons[neighbour].style.color = "yellow";
+            buttons[neighbour].style.color = "#0E7A11";
             break;
           case 3:
-            buttons[neighbour].style.color = "orange";
+            buttons[neighbour].style.color = "#852123";
             break;
           default:
-            buttons[neighbour].style.color = "red";
+            buttons[neighbour].style.color = "#FC0D1B";
         }
       }
     }
@@ -168,7 +160,7 @@ function checkField(i, buttons) {
 function gameOver() {
   alert("Вы проиграли!");
   container.childNodes.forEach((child, ind) => {
-    child.style.background = child.className == "odd_btn" ? "#f0af83" : "#ffc6a0";
+    child.classList.add("open_field");
     fields[ind].isOpen = true;
     if (fields[ind].isMine) {
       child.innerHTML = drawMine();
@@ -177,25 +169,42 @@ function gameOver() {
 }
 
 function drawMine() {
-  return `<svg
-    width="30" height="30"
-    viewBox="0 0 100 100"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="black"
->
-    <circle cx="50" cy="50" r="20" fill="black" />
-    <circle cx="50" cy="50" r="10" fill="darkred" />
-    <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="5" />
-    <line x1="50" y1="70" x2="50" y2="90" stroke="black" stroke-width="5" />
-    <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="5" />
-    <line x1="70" y1="50" x2="90" y2="50" stroke="black" stroke-width="5" />
-    
-    <line x1="20" y1="20" x2="35" y2="35" stroke="black" stroke-width="5" />
-    <line x1="65" y1="65" x2="80" y2="80" stroke="black" stroke-width="5" />
-    <line x1="65" y1="35" x2="80" y2="20" stroke="black" stroke-width="5" />
-    <line x1="20" y1="80" x2="35" y2="65" stroke="black" stroke-width="5" />
-</svg>
-`;
+  return `<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shorter Spikes -->
+        <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4"/>
+        <line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4"/>
+        <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4"/>
+        <line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4"/>
+        <line x1="25" y1="25" x2="35" y2="35" stroke="black" stroke-width="4"/>
+        <line x1="75" y1="75" x2="65" y2="65" stroke="black" stroke-width="4"/>
+        <line x1="75" y1="25" x2="65" y2="35" stroke="black" stroke-width="4"/>
+        <line x1="25" y1="75" x2="35" y2="65" stroke="black" stroke-width="4"/>
+        
+        <!-- Mine body -->
+        <circle cx="50" cy="50" r="20" fill="black" stroke="black" stroke-width="2"/>
+        
+        <!-- Highlight -->
+        <circle cx="44" cy="44" r="5" fill="white"/>
+    </svg>`;
+  //   return `<svg
+  //     width="30" height="30"
+  //     viewBox="0 0 100 100"
+  //     xmlns="http://www.w3.org/2000/svg"
+  //     fill="black"
+  // >
+  //     <circle cx="50" cy="50" r="20" fill="black" />
+  //     <circle cx="50" cy="50" r="10" fill="darkred" />
+  //     <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="5" />
+  //     <line x1="50" y1="70" x2="50" y2="90" stroke="black" stroke-width="5" />
+  //     <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="5" />
+  //     <line x1="70" y1="50" x2="90" y2="50" stroke="black" stroke-width="5" />
+
+  //     <line x1="20" y1="20" x2="35" y2="35" stroke="black" stroke-width="5" />
+  //     <line x1="65" y1="65" x2="80" y2="80" stroke="black" stroke-width="5" />
+  //     <line x1="65" y1="35" x2="80" y2="20" stroke="black" stroke-width="5" />
+  //     <line x1="20" y1="80" x2="35" y2="65" stroke="black" stroke-width="5" />
+  // </svg>
+  // `;
 }
 
 function drawFlag() {

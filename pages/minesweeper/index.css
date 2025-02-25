@@ -10,9 +10,12 @@
     display: grid;
     grid-template-rows: repeat(9, 50px);
     grid-template-columns: repeat(8,50px);
+    background: #BFBFBF;
+    padding: 10px;
+    border-radius: 2px;
 }
 
-.odd_btn, .even_btn{
+.field{
     border: none;
     outline: none;
     font-size: 30px;
@@ -21,17 +24,18 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    background: #BFBFBF;
+    border-top: 5px solid #FFF;
+    border-left: 5px solid #FFF;
+    border-bottom: 5px solid #878787;
+    border-right: 5px solid #878787;
 }
 
-.odd_btn{
-    background-color: rgb(50, 180, 50);
+.field:active{
+    scale: 0.9;
 }
 
-.even_btn{
-    background-color: rgb(90, 209, 90);
-}
-
-.color{
-    color: #f0af83;
-    background: #ffc6a0;
+.open_field{
+    border: 1px solid #BFBFBF;
+    background: #e2e2e2;
 }
