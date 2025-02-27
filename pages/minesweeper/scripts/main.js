@@ -1,22 +1,50 @@
-import { fields } from "./data.js";
+import { getFields, level } from "./data.js";
+import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
+import { drawFlag, drawMine, killSmile, smileIsAlive } from "./drawSVG.js";
 
+const rows = level.rows;
+let fields = getFields();
 let isGameStart = false;
-const rows = 8;
+let isGameOver = false;
+let intervalCancel = null;
+
+const smile = document.getElementById("smile");
+smile.addEventListener('click',()=>{
+  fields = getFields();
+  isGameStart = false;
+  isGameOver = false;
+  smile.innerHTML = smileIsAlive();
+  if(intervalCancel){
+    intervalCancel();
+  }
+  render();
+});
+
 const container = document.getElementById("container");
+const flagsCounterDigits = [
+  document.getElementById("first_num"),
+  document.getElementById("second_num"),
+  document.getElementById("third_num")
+]
+let flagsCounter = level.mines;
+container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
+container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
+
+
 render();
 
 function generateFields(filedsAmount) {
   let html = "";
   for (let i = 0; i < filedsAmount; i++) {
     html += `<button class="field" value="${i}"></button>`;
-  }
+  };
 
   return html;
 }
 
 function generateMines(firstInd) {
   const mines = new Set();
-  while (mines.size !== 12) {
+  while (mines.size !== level.mines) {
     const minePosition = Math.floor(Math.random() * fields.length);
     if (minePosition === firstInd) continue;
     if (!mines.has(minePosition)) {
@@ -31,26 +59,38 @@ function setField() {
   const buttons = container.childNodes;
   buttons.forEach((button, buttonInd) => {
     button.addEventListener("contextmenu", (e) => {
+      if (isGameOver) return;
       e.preventDefault();
       if (fields[buttonInd].isFlaged) {
+        flagsCounter+=1;
+        updateTablo(flagsCounter, flagsCounterDigits)
         buttons[buttonInd].innerHTML = "";
         fields[buttonInd].isFlaged = false;
       } else {
+        if(flagsCounter < 1) return;
+        flagsCounter-=1;
+        updateTablo(flagsCounter, flagsCounterDigits)
         buttons[buttonInd].innerHTML = drawFlag();
         fields[buttonInd].isFlaged = true;
       }
     });
 
     button.addEventListener("click", (event) => {
-      if (fields[buttonInd].isOpen || fields[buttonInd].isFlaged) return;
+      if (fields[buttonInd].isOpen || fields[buttonInd].isFlaged || isGameOver) return;
 
       if (fields[buttonInd].isMine) {
-        gameOver();
+        smile.innerHTML = killSmile();
+        isGameOver = true;
+        if(intervalCancel){
+          intervalCancel();
+        }
+        gameOver(buttonInd);
         return;
       }
 
       if (!isGameStart) {
         isGameStart = true;
+        intervalCancel = startTimer();
         generateMines(buttonInd);
       }
 
@@ -69,7 +109,7 @@ function setField() {
             buttons[buttonInd].style.color = "#852123";
             break;
           default:
-            buttons[button].style.color = "#FC0D1B";
+            buttons[buttonInd].style.color = "#FC0D1B";
         }
       }
     });
@@ -157,64 +197,22 @@ function checkField(i, buttons) {
   }
 }
 
-function gameOver() {
+function gameOver(failIndex) {
   alert("Вы проиграли!");
   container.childNodes.forEach((child, ind) => {
-    child.classList.add("open_field");
-    fields[ind].isOpen = true;
+    if (ind === failIndex) {
+      child.classList.add("failed");
+    }
+
     if (fields[ind].isMine) {
+      child.classList.add("open_field");
       child.innerHTML = drawMine();
     }
   });
 }
 
-function drawMine() {
-  return `<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Shorter Spikes -->
-        <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4"/>
-        <line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4"/>
-        <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4"/>
-        <line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4"/>
-        <line x1="25" y1="25" x2="35" y2="35" stroke="black" stroke-width="4"/>
-        <line x1="75" y1="75" x2="65" y2="65" stroke="black" stroke-width="4"/>
-        <line x1="75" y1="25" x2="65" y2="35" stroke="black" stroke-width="4"/>
-        <line x1="25" y1="75" x2="35" y2="65" stroke="black" stroke-width="4"/>
-        
-        <!-- Mine body -->
-        <circle cx="50" cy="50" r="20" fill="black" stroke="black" stroke-width="2"/>
-        
-        <!-- Highlight -->
-        <circle cx="44" cy="44" r="5" fill="white"/>
-    </svg>`;
-  //   return `<svg
-  //     width="30" height="30"
-  //     viewBox="0 0 100 100"
-  //     xmlns="http://www.w3.org/2000/svg"
-  //     fill="black"
-  // >
-  //     <circle cx="50" cy="50" r="20" fill="black" />
-  //     <circle cx="50" cy="50" r="10" fill="darkred" />
-  //     <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="5" />
-  //     <line x1="50" y1="70" x2="50" y2="90" stroke="black" stroke-width="5" />
-  //     <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="5" />
-  //     <line x1="70" y1="50" x2="90" y2="50" stroke="black" stroke-width="5" />
-
-  //     <line x1="20" y1="20" x2="35" y2="35" stroke="black" stroke-width="5" />
-  //     <line x1="65" y1="65" x2="80" y2="80" stroke="black" stroke-width="5" />
-  //     <line x1="65" y1="35" x2="80" y2="20" stroke="black" stroke-width="5" />
-  //     <line x1="20" y1="80" x2="35" y2="65" stroke="black" stroke-width="5" />
-  // </svg>
-  // `;
-}
-
-function drawFlag() {
-  return `<svg width="30" height="30" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <rect x="22" y="5" width="4" height="35" fill="black"/>
-            <polygon points="26,8 40,15 26,22" fill="red"/>
-            <rect x="15" y="40" width="20" height="5" fill="black"/>
-          </svg>`;
-}
-
 function render() {
   setField();
+  displayDigits();
+  setTimer();
 }

@@ -9,10 +9,42 @@
 <body>
     <div>Mainsweeper</div>
     <div class="mainsweeper_wrapper" >
-        <div class="mainsweeper_container" id="container"></div>
+        <div class="game_board" id="board">
+            <div class="tablo">
+                <div class="tablo_content">
+                    <div class="tablo_flag">
+                        <div class="clock">
+                            <div class="digit" id="first_num"></div>
+                            <div class="digit" id="second_num"></div>
+                            <div class="digit" id="third_num"></div>
+                        </div>
+                    </div>
+                    <div class="smile_container" id="smile" role="button">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="yellow" stroke="black" stroke-width="3"/>
+                            <rect x="20" y="30" width="20" height="10" fill="black"/>
+                            <rect x="60" y="30" width="20" height="10" fill="black"/>
+                            <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="3"/>
+                            <path d="M30 65 Q50 85, 70 65" stroke="black" stroke-width="3" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="timer_container">
+                        <div class="clock">
+                            <div class="digit" id="first_timer"></div>
+                            <div class="digit" id="second_timer"></div>
+                            <div class="digit" id="third_timer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mainsweeper_container" id="container">
+            </div>
+        </div>
     </div>
     
 <script src="scripts/main.js" type="module"></script>
 <script src="scripts/data.js" type="module"></script>
+<script src="scripts/digits.js" type="module"></script>
+<script src="scripts/drawSVG.js" type="module"></script>
 </body>
 </html>
