@@ -6,6 +6,11 @@ body{
     background: whitesmoke;
 }
 
+.sidebar_info{
+    background: #59200f;
+    margin-top: 10px;
+    padding: 20px;
+}
 
 .mainsweeper_wrapper{
     width: 100%;
@@ -13,6 +18,8 @@ body{
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    flex-direction: row;
+    gap: 30px;
 }
 
 .mainsweeper_container{

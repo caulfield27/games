@@ -1,6 +1,6 @@
 import { getFields, level } from "./data.js";
 import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
-import { drawFlag, drawMine, killSmile, smileIsAlive } from "./drawSVG.js";
+import  { killSmile, smileIsAlive } from "./drawSVG.js";
 
 const rows = level.rows;
 let fields = getFields();
@@ -9,12 +9,12 @@ let isGameOver = false;
 let intervalCancel = null;
 
 const smile = document.getElementById("smile");
-smile.addEventListener('click',()=>{
+smile.addEventListener("click", () => {
   fields = getFields();
   isGameStart = false;
   isGameOver = false;
   smile.innerHTML = smileIsAlive();
-  if(intervalCancel){
+  if (intervalCancel) {
     intervalCancel();
   }
   render();
@@ -24,12 +24,11 @@ const container = document.getElementById("container");
 const flagsCounterDigits = [
   document.getElementById("first_num"),
   document.getElementById("second_num"),
-  document.getElementById("third_num")
-]
+  document.getElementById("third_num"),
+];
 let flagsCounter = level.mines;
 container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
 container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
-
 
 render();
 
@@ -37,7 +36,7 @@ function generateFields(filedsAmount) {
   let html = "";
   for (let i = 0; i < filedsAmount; i++) {
     html += `<button class="field" value="${i}"></button>`;
-  };
+  }
 
   return html;
 }
@@ -62,15 +61,17 @@ function setField() {
       if (isGameOver) return;
       e.preventDefault();
       if (fields[buttonInd].isFlaged) {
-        flagsCounter+=1;
-        updateTablo(flagsCounter, flagsCounterDigits)
+        flagsCounter += 1;
+        updateTablo(flagsCounter, flagsCounterDigits);
         buttons[buttonInd].innerHTML = "";
         fields[buttonInd].isFlaged = false;
       } else {
-        if(flagsCounter < 1) return;
-        flagsCounter-=1;
-        updateTablo(flagsCounter, flagsCounterDigits)
-        buttons[buttonInd].innerHTML = drawFlag();
+        if (flagsCounter < 1) return;
+        flagsCounter -= 1;
+        updateTablo(flagsCounter, flagsCounterDigits);
+        buttons[
+          buttonInd
+        ].innerHTML = `<img style="width: ${level.flagSize};" src="./images/flag.png" alt="">`;
         fields[buttonInd].isFlaged = true;
       }
     });
@@ -81,7 +82,7 @@ function setField() {
       if (fields[buttonInd].isMine) {
         smile.innerHTML = killSmile();
         isGameOver = true;
-        if(intervalCancel){
+        if (intervalCancel) {
           intervalCancel();
         }
         gameOver(buttonInd);
@@ -206,7 +207,7 @@ function gameOver(failIndex) {
 
     if (fields[ind].isMine) {
       child.classList.add("open_field");
-      child.innerHTML = drawMine();
+      child.innerHTML = `<img style="width: ${level.mineSize};" src="./images/naval-mine.svg" alt="mine">`;
     }
   });
 }

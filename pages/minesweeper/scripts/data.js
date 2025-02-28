@@ -4,18 +4,24 @@ export const levels = {
     cols: 8,
     mines: 10,
     size: "45px",
+    mineSize: "35px",
+    flagSize: "35px"
   },
   средний: {
     rows: 18,
     cols: 14,
     mines: 40,
     size: "35px",
+    mineSize: "30px",
+    flagSize: "25px"
   },
   сложный: {
     rows: 24,
     cols: 20,
     mines: 99,
     size: "25px",
+    mineSize: "25px",
+    flagSize: "20px"
   },
 };
 
