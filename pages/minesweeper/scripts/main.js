@@ -71,7 +71,7 @@ function setField() {
         updateTablo(flagsCounter, flagsCounterDigits);
         buttons[
           buttonInd
-        ].innerHTML = `<img style="width: ${level.flagSize};" src="./images/flag.png" alt="">`;
+        ].innerHTML = `<img style="width: ${level.flagSize};" src="/pages/minesweeper/images/flag.png" alt="flag icon">`;
         fields[buttonInd].isFlaged = true;
       }
     });
@@ -207,7 +207,7 @@ function gameOver(failIndex) {
 
     if (fields[ind].isMine) {
       child.classList.add("open_field");
-      child.innerHTML = `<img style="width: ${level.mineSize};" src="./images/naval-mine.svg" alt="mine">`;
+      child.innerHTML = `<img style="width: ${level.mineSize};" src="/pages/minesweeper/images/naval-mine.svg" alt="mine">`;
     }
   });
 }

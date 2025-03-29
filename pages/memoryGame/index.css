@@ -67,10 +67,11 @@ button {
     height: 150px;
     cursor: pointer;
     background: white;
+    transition: all 0.2s linear;
 }
 
 .card:hover{
-    scale: 1.1;
+    scale: 1.04;
 }
 
 .content_wrap {
@@ -119,6 +120,8 @@ button {
 .buttons_wrap button:hover {
     scale: 0.96;
 }
+
+
 
 .settings_modal {
     position: absolute;

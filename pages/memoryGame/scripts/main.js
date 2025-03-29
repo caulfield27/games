@@ -1,10 +1,10 @@
 import { images } from "./constants.js"
-import { closeSettingsModal, setSettings, settings } from "./settings.js"
 
+// document.addEventListener('DOMContentLoaded', handleRouteUpdate);
 let container = document.getElementById('cards_container');
 let queue = [];
-const defaultImage = './images/others/question.png';
-let shuffled = shuffleCards(images[0][settings['category']].slice(0, settings['amount']));
+const defaultImage = '/pages/memoryGame/images/others/question.png';
+let shuffled = shuffleCards(images[0]["humo"].slice(0, 16));
 let winCounter = 0;
 let history = [];
 let cards = document.getElementsByClassName('content_wrap');
@@ -92,18 +92,11 @@ function play(i) {
 
 
 export function restart() {
-    window.location.reload();
+    shuffled = shuffleCards(images[0]["humo"].slice(0, 16));
+    run();
 }
 
-document.getElementById('save-btn').addEventListener('click', () => {
-    let newSettings = setSettings();
-    localStorage.setItem('settings', JSON.stringify(newSettings));
-    shuffled = shuffleCards(images[0][newSettings['category']].slice(0, newSettings['amount']));
-    displayCards();
-    addListenerToCards();
-    closeSettingsModal();
-    setContainer(shuffled);
-})
+
 
 function setContainer(array) {
     let appContainter = document.getElementById('app_container');
@@ -126,7 +119,7 @@ function setContainer(array) {
 
             for (let i = 0; i < images.length; i++) {
                 images[i].style.top = '8px';
-                images[i].style.left = '4px';
+                images[i].style.left = '0';
             }
 
         }, 0)
