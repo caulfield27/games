@@ -67,6 +67,7 @@ button {
     height: 150px;
     cursor: pointer;
     background: white;
+    transition: all 0.2s linear;
 }
 
 .card:hover{
