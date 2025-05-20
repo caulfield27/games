@@ -142,3 +142,20 @@ button {
     border-radius: 8px;
     cursor: pointer;
 }
+
+.timer_wrapper{
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid gainsboro;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.timer_wrapper span{
+    color: yellow;
+    font-size: 24px;
+    font-weight: 600;
+}

@@ -1,23 +1,15 @@
 import { images } from "./constants.js";
-// import { closeSettingsModal, setSettings, settings } from "./settings.js"
 
-const settings = localStorage.getItem("settings")
+// SETTINGS
+
+let settings = localStorage.getItem("settings")
   ? JSON.parse(localStorage.getItem("settings"))
   : {
       level: "easy",
-      amount: "12",
+      quantity: "12",
       category: "humo",
     };
-let container = document.getElementById("cards_container");
-let queue = [];
-const defaultImage = "./images/others/question.png";
-let shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["amount"]));
-let winCounter = 0;
-let history = [];
-let cards = document.getElementsByClassName("content_wrap");
-document.getElementById("restart").addEventListener("click", restart);
-
-run();
+let shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
 
 function shuffleCards(data) {
   let shuffledArr = [];
@@ -33,21 +25,70 @@ function shuffleCards(data) {
   return shuffledArr;
 }
 
-function addListenerToCards() {
-  for (let i = 0; i < cards.length; i++) {
-    cards[i].addEventListener("click", () => {
-      if (
-        queue.length === 2 ||
-        history.includes(i) ||
-        cards[i].classList.contains("active")
-      ) {
-        return;
-      } else {
-        play(i);
-      }
-    });
-  }
-}
+document.getElementById("settings").addEventListener("click", () => {
+  Swal.fire({
+    title: "Settings",
+    html: `
+    <div class="settings_container">  
+         <div class="setting_wrap">
+            <span>level</span>
+            <select name="level" id="level">
+                <option value="easy">easy</option>
+                <option value="medium">medium</option>
+                <option value="hard">hard</option>
+            </select>
+        </div>
+        <div class="setting_wrap">
+            <span>quantity</span>
+            <select name="quantity" id="quantity">
+                <option value="12">10</option>
+                <option value="16">16</option>
+                <option value="20">20</option>
+                <option value="32">32</option>
+            </select>
+        </div>
+        <div class="setting_wrap">
+            <span>category</span>
+            <select name="category" id="category">
+                <option value="humo">humo</option>
+                <option value="cars">cars</option>
+            </select>
+        </div>
+    </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: "Save",
+    preConfirm: () => {
+      const [level, quantity, category] = [
+        document.getElementById("level").value,
+        document.getElementById("quantity").value,
+        document.getElementById("category").value,
+      ];
+      settings = {
+        level,
+        quantity,
+        category,
+      };
+    },
+  }).then((res) => {
+    if (res?.isConfirmed) {
+      localStorage.setItem("settings", JSON.stringify(settings));
+      shuffled = shuffleCards(images[0][settings["category"]].slice(0, settings["quantity"]));
+      displayCards();
+      addListenerToCards();
+      setContainer(shuffled);
+    }
+  });
+  document.getElementById("level").value = settings["level"];
+  document.getElementById("quantity").value = settings["quantity"];
+  document.getElementById("category").value = settings["category"];
+});
+
+// VIEW
+
+let container = document.getElementById("cards_container");
+let cards = document.getElementsByClassName("content_wrap");
+const defaultImage = "./images/others/question.png";
 
 function displayCards() {
   container.innerHTML = `
@@ -62,48 +103,6 @@ function displayCards() {
             </div>`
           )
           .join("")}`;
-}
-
-function play(i) {
-  cards[i].classList.add("active");
-
-  if (queue.length < 2) {
-    queue.push({ src: cards[i].children[1].src, ind: i });
-  }
-
-  if (queue.length === 2) {
-    if (queue[0].src !== queue[1].src) {
-      setTimeout(() => {
-        cards[queue[0].ind].classList.remove("active");
-        cards[queue[1].ind].classList.remove("active");
-        queue = [];
-      }, 500);
-    } else {
-      winCounter++;
-      history.push(queue[0].ind, queue[1].ind);
-      queue = [];
-    }
-  }
-
-  if (winCounter === shuffled.length / 2) {
-    winCounter = 0;
-    setTimeout(() => {
-      Swal.fire({
-        title: "Поздравляю, вы выиграли!",
-        icon: "success",
-        showCancelButton: false,
-        confirmButtonText: "Сыграть ещё" 
-      }).then((res)=>{
-        if(res?.isConfirmed){
-            restart();
-        }
-      })
-    }, 500);
-  }
-}
-
-function restart() {
-  window.location.reload();
 }
 
 function setContainer(array) {
@@ -151,75 +150,110 @@ function setContainer(array) {
   }
 }
 
-// document.getElementById('save-btn').addEventListener('click', () => {
-//     let newSettings = setSettings();
-//     localStorage.setItem('settings', JSON.stringify(newSettings));
-//     shuffled = shuffleCards(images[0][newSettings['category']].slice(0, newSettings['amount']));
-//     displayCards();
-//     addListenerToCards();
-//     // closeSettingsModal();
-//     setContainer(shuffled);
-// })
-
-document.getElementById("settings").addEventListener("click", () => {
-  let newSettings;
-  Swal.fire({
-    title: "Settings",
-    html: `
-    <div class="settings_container">  
-         <div class="setting_wrap">
-            <span>level</span>
-            <select name="level" id="level">
-                <option value="easy">easy</option>
-                <option value="medium">medium</option>
-                <option value="hard">hard</option>
-            </select>
-        </div>
-        <div class="setting_wrap">
-            <span>acount</span>
-            <select name="amount" id="amount">
-                <option value="10">10</option>
-                <option value="16">16</option>
-                <option value="20">20</option>
-                <option value="32">32</option>
-            </select>
-        </div>
-        <div class="setting_wrap">
-            <span>category</span>
-            <select name="category" id="category">
-                <option value="humo">humo</option>
-                <option value="cars">cars</option>
-            </select>
-        </div>
-    </div>
-    `,
-    showCancelButton: true,
-    confirmButtonText: "Save",
-    preConfirm: () => {
-      const [level, amount, category] = [
-        document.getElementById("level").value,
-        document.getElementById("amount").value,
-        document.getElementById("category").value,
-      ];
-      newSettings = {
-        level,
-        amount,
-        category,
-      };
-    },
-  }).then((res) => {
-    if (res?.isConfirmed && newSettings) {
-      localStorage.setItem("settings", JSON.stringify(newSettings));
-      shuffled = shuffleCards(images[0][newSettings["category"]].slice(0, newSettings["amount"]));
-      displayCards();
-      addListenerToCards();
-      setContainer(shuffled);
-    }
-  });
-});
-
 function run() {
   displayCards();
   addListenerToCards();
   setContainer(shuffled);
+}
+
+run();
+
+// GAME LOGIC
+
+let queue = [];
+let winCounter = 0;
+let history = [];
+let clearTimer = null;
+
+function addListenerToCards() {
+  for (let i = 0; i < cards.length; i++) {
+    cards[i].addEventListener("click", () => {
+      if (queue.length === 2 || history.includes(i) || cards[i].classList.contains("active")) {
+        return;
+      } else {
+        play(i);
+      }
+    });
+  }
+}
+
+function play(i) {
+  cards[i].classList.add("active");
+
+  if (queue.length < 2) {
+    queue.push({ src: cards[i].children[1].src, ind: i });
+  }
+
+  if (queue.length === 2) {
+    if (queue[0].src !== queue[1].src) {
+      setTimeout(() => {
+        cards[queue[0].ind].classList.remove("active");
+        cards[queue[1].ind].classList.remove("active");
+        queue = [];
+      }, 500);
+    } else {
+      winCounter++;
+      history.push(queue[0].ind, queue[1].ind);
+      queue = [];
+    }
+  }
+
+  if (winCounter === shuffled.length / 2) {
+    winCounter = 0;
+    setTimeout(() => {
+      Swal.fire({
+        title: "Поздравляю, вы выиграли!",
+        icon: "success",
+        showCancelButton: false,
+        confirmButtonText: "Сыграть ещё",
+      }).then((res) => {
+        if (res?.isConfirmed) {
+          restart();
+        }
+      });
+    }, 500);
+  }
+}
+
+document.getElementById("restart").addEventListener("click", restart);
+
+function restart() {
+  window.location.reload();
+}
+
+// TIMER
+const timer = {
+  minutes: localStorage.getItem("settings")?.timer ?? 1,
+  seconds: 0,
+};
+
+const domMinutes = document.getElementById("minutes");
+domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+const domSeconds = document.getElementById("seconds");
+domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+
+function startTimer() {
+  const interval = setInterval(() => {
+    if (timer.seconds === 0) {
+      timer.minutes--;
+      timer.seconds = 59;
+      domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+      domSeconds.textContent = timer.domSeconds;
+    } else {
+      timer.seconds--;
+      domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+    }
+    if (timer.minutes === 0 && timer.seconds === 0) {
+      clearInterval(timer);
+      Swal.fire({
+        title: "Вы проиграли",
+        text: "Вы не успели найти все пары во время ):",
+        icon: "error",
+      }).then(() => clearInterval(interval));
+    }
+  }, [1000]);
+
+  return () => {
+    clearInterval(interval);
+  };
 }
