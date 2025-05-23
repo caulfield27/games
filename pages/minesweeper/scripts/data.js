@@ -5,7 +5,7 @@ export const levels = {
     mines: 10,
     size: "45px",
     mineSize: "35px",
-    flagSize: "35px"
+    flagSize: "35px",
   },
   средний: {
     rows: 18,
@@ -13,7 +13,7 @@ export const levels = {
     mines: 40,
     size: "35px",
     mineSize: "30px",
-    flagSize: "25px"
+    flagSize: "25px",
   },
   сложный: {
     rows: 24,
@@ -21,11 +21,11 @@ export const levels = {
     mines: 99,
     size: "25px",
     mineSize: "25px",
-    flagSize: "20px"
+    flagSize: "20px",
   },
 };
 
-export const level = levels[localStorage.getItem("level") || "средний"];
+export const level = levels[localStorage.getItem("level") || "лёгкий"];
 
 const rows = level.rows;
 let edgeTrack = level.rows - 1;

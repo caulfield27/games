@@ -178,6 +178,9 @@ function addListenerToCards() {
 }
 
 function play(i) {
+  if (!clearTimer) {
+    clearTimer = startTimer();
+  }
   cards[i].classList.add("active");
 
   if (queue.length < 2) {
@@ -222,38 +225,51 @@ function restart() {
 }
 
 // TIMER
-const timer = {
-  minutes: localStorage.getItem("settings")?.timer ?? 1,
+const timer = new Timer({
+  minutes: 1,
   seconds: 0,
-};
+  minutesTextContent: document.getElementById("minutes").textContent,
+  secondsTextContent: document.getElementById("seconds").textContent,
+  timerDOMelement: document.getElementsByClassName("timer_wrapper")
+},restart)
 
-const domMinutes = document.getElementById("minutes");
-domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-const domSeconds = document.getElementById("seconds");
-domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+console.log(timer);
 
-function startTimer() {
-  const interval = setInterval(() => {
-    if (timer.seconds === 0) {
-      timer.minutes--;
-      timer.seconds = 59;
-      domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-      domSeconds.textContent = timer.domSeconds;
-    } else {
-      timer.seconds--;
-      domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
-    }
-    if (timer.minutes === 0 && timer.seconds === 0) {
-      clearInterval(timer);
-      Swal.fire({
-        title: "Вы проиграли",
-        text: "Вы не успели найти все пары во время ):",
-        icon: "error",
-      }).then(() => clearInterval(interval));
-    }
-  }, [1000]);
 
-  return () => {
-    clearInterval(interval);
-  };
-}
+// const timer = {
+//   minutes: localStorage.getItem("settings")?.timer ?? 1,
+//   seconds: 0,
+// };
+
+// const domMinutes = document.getElementById("minutes");
+// domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+// const domSeconds = document.getElementById("seconds");
+// domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+
+// function startTimer() {
+//   const interval = setInterval(() => {
+//     if (timer.seconds === 0) {
+//       if (timer.minutes === 0) {
+//         clearInterval(timer);
+//         console.log('test');
+//         Swal.fire({
+//           title: "Вы проиграли",
+//           text: "Вы не успели найти все пары во время ):",
+//           icon: "error",
+//         }).then(() => clearInterval(interval));
+//       } else {
+//         timer.minutes--;
+//         timer.seconds = 59;
+//         domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+//         domSeconds.textContent = timer.seconds;
+//       }
+//     } else {
+//       timer.seconds--;
+//       domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+//     }
+//   }, [1000]);
+
+//   return () => {
+//     clearInterval(interval);
+//   };
+// }
