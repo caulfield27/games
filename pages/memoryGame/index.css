@@ -46,13 +46,13 @@ button {
     flex-direction: row;
     flex-wrap: wrap;
     background: ghostwhite;
-    gap: 45px;
+    gap: 10px;
     align-content: center;
     justify-content: center;
-    margin-top: 20px;
     padding: 40px;
     border-radius: 8px;
     border: 12px solid #CB9DF0;
+    margin: 28px auto;
 }
 
 
@@ -63,11 +63,11 @@ button {
     align-items: center;
     border-radius: 12px;
     border: 3px solid #CB9DF0;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
     background: white;
-    transition: all 0.2s linear;
+    transition: scale 0.2s linear;
 }
 
 .card:hover{
@@ -85,11 +85,11 @@ button {
 .front,
 .back {
     position: absolute;
-    top: 20px;
-    left: 15px;
+    top: 13px;
+    left: 10px;
     backface-visibility: hidden;
-    width: 120px;
-    height: 100px;
+    width: 80px;
+    height: 60px;
 }
 
 .back {
@@ -100,6 +100,7 @@ button {
 
 .active {
     transform: rotateY(180deg);
+    pointer-events: none;
 }
 
 .buttons_wrap {
@@ -109,7 +110,7 @@ button {
 }
 
 .buttons_wrap img {
-    width: 36px;
+    width: 20px;
 }
 
 .buttons_wrap button {
@@ -131,7 +132,6 @@ button {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 100px;
 }
 
 .setting_wrap select {
@@ -155,7 +155,14 @@ button {
 }
 
 .timer_wrapper span{
-    color: yellow;
+    color: #ff8a4b;
     font-size: 24px;
     font-weight: 600;
+}
+
+.timer_inputs input{
+    border: 1px solid gainsboro;
+    border-radius: 6px;
+    outline: #CB9DF0;
+    padding: 3px;
 }

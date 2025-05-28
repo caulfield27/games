@@ -1,24 +1,29 @@
 import { getFields, level } from "./data.js";
 import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
-import  { killSmile, smileIsAlive } from "./drawSVG.js";
+import { killSmile, smileIsAlive } from "./drawSVG.js";
 
 const rows = level.rows;
 let fields = getFields();
 let isGameStart = false;
 let isGameOver = false;
 let intervalCancel = null;
+let flagsCounter = level.mines;
 
-const smile = document.getElementById("smile");
-smile.addEventListener("click", () => {
+function restart() {
   fields = getFields();
   isGameStart = false;
   isGameOver = false;
+  flagsCounter = level.mines;
+  window.minesweeperSeconds = 0;
   smile.innerHTML = smileIsAlive();
   if (intervalCancel) {
     intervalCancel();
   }
   render();
-});
+}
+
+const smile = document.getElementById("smile");
+smile.addEventListener("click", restart);
 
 const container = document.getElementById("container");
 const flagsCounterDigits = [
@@ -26,7 +31,7 @@ const flagsCounterDigits = [
   document.getElementById("second_num"),
   document.getElementById("third_num"),
 ];
-let flagsCounter = level.mines;
+
 container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
 container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
 
@@ -95,11 +100,11 @@ function setField() {
         generateMines(buttonInd);
       }
 
+    
       const minesAround = checkField(buttonInd, buttons);
       if (minesAround) {
         buttons[buttonInd].innerHTML = minesAround;
         switch (minesAround) {
-          case 1:
           case 1:
             buttons[buttonInd].style.color = "#0B24FB";
             break;
@@ -112,7 +117,26 @@ function setField() {
           default:
             buttons[buttonInd].style.color = "#FC0D1B";
         }
+      };
+
+      if (isWin(fields, level.mines)) {
+        if(intervalCancel){
+          clearInterval(intervalCancel);
+        };
+        setTimeout(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Поздравляю, вы выиграли!",
+            text: `Вы нашли все мины за ${window?.minesweeperSeconds ?? ""} секунд.`,
+            confirmButtonText: "Сыграть ещё"
+          }).then((res) => {
+            if (res?.isConfirmed) {
+              restart();
+            }
+          })
+        }, [500])
       }
+
     });
   });
 }
@@ -199,15 +223,27 @@ function checkField(i, buttons) {
 }
 
 function gameOver(failIndex) {
-  alert("Вы проиграли!");
-  container.childNodes.forEach((child, ind) => {
-    if (ind === failIndex) {
-      child.classList.add("failed");
-    }
+  Swal.fire({
+    icon: "error",
+    title: "Вы проиграли",
+    text: "К сожалению, вы наступили на мину.",
+    showCancelButton: true,
+    confirmButtonText: "Попробовать ещё раз",
+    cancelButtonText: "Посмотреть результат"
+  }).then((res) => {
+    if (res?.isConfirmed) {
+      restart();
+    } else {
+      container.childNodes.forEach((child, ind) => {
+        if (ind === failIndex) {
+          child.classList.add("failed");
+        }
 
-    if (fields[ind].isMine) {
-      child.classList.add("open_field");
-      child.innerHTML = `<img style="width: ${level.mineSize};" src="/pages/minesweeper/images/naval-mine.svg" alt="mine">`;
+        if (fields[ind].isMine) {
+          child.classList.add("open_field");
+          child.innerHTML = `<img style="width: ${level.mineSize};" src="/pages/minesweeper/images/naval-mine.svg" alt="mine">`;
+        }
+      });
     }
   });
 }
@@ -216,4 +252,14 @@ function render() {
   setField();
   displayDigits();
   setTimer();
+}
+
+function isWin(fields, mines) {
+  let openCounter = 0;
+  for (const field of fields) {
+    if (field.isOpen) {
+      openCounter++;
+    }
+  };
+  return (openCounter + mines) === fields.length;
 }

@@ -58,12 +58,17 @@ export function setTimer() {
   updateTablo(0, timerElements);
 }
 
+window.minesweeperSeconds = 0;
+
 export function startTimer(){
-    let seconds = 1;
-    updateTablo(seconds,timerElements);
+    updateTablo(window.minesweeperSeconds,timerElements);
     const interval = setInterval(()=>{
-        seconds+=1;
-        updateTablo(seconds,timerElements);
+        if(window.minesweeperSeconds === 1000){
+          
+        }else{
+          window.minesweeperSeconds++;
+          updateTablo(window.minesweeperSeconds,timerElements);
+        }
     },1000);
 
     return ()=>{

@@ -5,10 +5,13 @@ import { images } from "./constants.js";
 let settings = localStorage.getItem("settings")
   ? JSON.parse(localStorage.getItem("settings"))
   : {
-      level: "easy",
-      quantity: "12",
-      category: "humo",
-    };
+    time: {
+      minutes: 1,
+      seconds: 0
+    },
+    quantity: "12",
+    category: "humo",
+  };
 let shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
 
 function shuffleCards(data) {
@@ -31,17 +34,18 @@ document.getElementById("settings").addEventListener("click", () => {
     html: `
     <div class="settings_container">  
          <div class="setting_wrap">
-            <span>level</span>
-            <select name="level" id="level">
-                <option value="easy">easy</option>
-                <option value="medium">medium</option>
-                <option value="hard">hard</option>
-            </select>
+            <span>time</span>
+            <div class="timer_inputs">
+              <label for="min">m</label>
+              <input id="min" type="number" min="0" max="10"/>
+              <label for="sec">s</label>
+              <input id="sec" type="number" min="0" max="59"/>
+            </div>
         </div>
         <div class="setting_wrap">
             <span>quantity</span>
             <select name="quantity" id="quantity">
-                <option value="12">10</option>
+                <option value="10">10</option>
                 <option value="16">16</option>
                 <option value="20">20</option>
                 <option value="32">32</option>
@@ -59,13 +63,19 @@ document.getElementById("settings").addEventListener("click", () => {
     showCancelButton: true,
     confirmButtonText: "Save",
     preConfirm: () => {
-      const [level, quantity, category] = [
-        document.getElementById("level").value,
+      const [minutes, seconds, quantity, category] = [
+        document.getElementById("min").value,
+        document.getElementById("sec").value,
         document.getElementById("quantity").value,
         document.getElementById("category").value,
       ];
+      const validMinutes = +minutes;
+      const validSeconds = +seconds;
       settings = {
-        level,
+        timer: {
+          minutes: validMinutes < 0 ? 0 : validMinutes,
+          seconds: validSeconds < 0 ? 30 : validSeconds
+        },
         quantity,
         category,
       };
@@ -73,15 +83,13 @@ document.getElementById("settings").addEventListener("click", () => {
   }).then((res) => {
     if (res?.isConfirmed) {
       localStorage.setItem("settings", JSON.stringify(settings));
-      shuffled = shuffleCards(images[0][settings["category"]].slice(0, settings["quantity"]));
-      displayCards();
-      addListenerToCards();
-      setContainer(shuffled);
+      restart();
     }
   });
-  document.getElementById("level").value = settings["level"];
   document.getElementById("quantity").value = settings["quantity"];
   document.getElementById("category").value = settings["category"];
+  document.getElementById("min").value = settings["timer"]["minutes"];
+  document.getElementById("sec").value = settings["timer"]["seconds"]
 });
 
 // VIEW
@@ -91,79 +99,68 @@ let cards = document.getElementsByClassName("content_wrap");
 const defaultImage = "./images/others/question.png";
 
 function displayCards() {
+  const { quantity } = settings;
+  container.style.maxWidth = quantity === "10" || quantity === "16" ? "600px" : quantity === "20" ? "700px" : "1000px"
   container.innerHTML = `
         ${shuffled
-          .map(
-            (image) =>
-              `<div class="card">
+      .map(
+        (image) =>
+          `<div class="card">
                 <div class="content_wrap">
                     <img src="${defaultImage}" class="img front" />
                     <img src="${image.src}" class="img back" />
                 </div>
             </div>`
-          )
-          .join("")}`;
+      )
+      .join("")}`;
 }
 
-function setContainer(array) {
-  let appContainter = document.getElementById("app_container");
-  let cards;
-  let images;
-
-  if (array.length > 16) {
-    container.style.gridTemplateColumns = "repeat(10, 120px)";
-    container.style.gap = "20px";
-    appContainter.style.maxWidth = "none";
-    appContainter.style.padding = "35px";
-    setTimeout(() => {
-      cards = document.getElementsByClassName("card");
-      images = document.getElementsByClassName("img");
-
-      for (let i = 0; i < cards.length; i++) {
-        cards[i].style.width = "120px";
-        cards[i].style.height = "120px";
-      }
-
-      for (let i = 0; i < images.length; i++) {
-        images[i].style.top = "8px";
-        images[i].style.left = "4px";
-      }
-    }, 0);
-  } else {
-    appContainter.style.maxWidth = "1000px";
-    container.style.gridTemplateColumns = "repeat(5,135px)";
-    container.style.gap = "20px";
-    setTimeout(() => {
-      cards = document.getElementsByClassName("card");
-      images = document.getElementsByClassName("img");
-
-      for (let i = 0; i < cards.length; i++) {
-        cards[i].style.width = "135px";
-        cards[i].style.height = "125px";
-      }
-
-      for (let i = 0; i < images.length; i++) {
-        images[i].style.top = "10px";
-        images[i].style.left = "5px";
-      }
-    }, 0);
-  }
-}
 
 function run() {
   displayCards();
   addListenerToCards();
-  setContainer(shuffled);
+
 }
 
 run();
+
+//TIMER
+
+const domMinutes = document.getElementById("minutes");
+const domSeconds = document.getElementById("seconds");
+const timer = new Timer({
+  minutes: 1,
+  seconds: 0,
+  minutesDOMelement: domMinutes,
+  secondsDOMelement: domSeconds,
+},
+  () => Swal.fire({
+    title: "Вы проиграли",
+    text: "Вы не успели найти все пары во время ):",
+    icon: "error",
+    confirmButtonText: "Попробовать ещё"
+  }).then((res) => {
+    if (res.isConfirmed) {
+      restart()
+    }
+  }
+  ))
+
+function setTimer() {
+  const {timer} = settings;
+  domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
+  domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+}
+
+setTimer();
+
+
 
 // GAME LOGIC
 
 let queue = [];
 let winCounter = 0;
 let history = [];
-let clearTimer = null;
 
 function addListenerToCards() {
   for (let i = 0; i < cards.length; i++) {
@@ -178,8 +175,8 @@ function addListenerToCards() {
 }
 
 function play(i) {
-  if (!clearTimer) {
-    clearTimer = startTimer();
+  if (!timer.isTimerActive) {
+    timer.startTimer();
   }
   cards[i].classList.add("active");
 
@@ -202,17 +199,15 @@ function play(i) {
   }
 
   if (winCounter === shuffled.length / 2) {
-    winCounter = 0;
+    timer.stopTimer();
     setTimeout(() => {
       Swal.fire({
         title: "Поздравляю, вы выиграли!",
         icon: "success",
         showCancelButton: false,
         confirmButtonText: "Сыграть ещё",
-      }).then((res) => {
-        if (res?.isConfirmed) {
-          restart();
-        }
+      }).then(() => {
+        restart();
       });
     }, 500);
   }
@@ -221,55 +216,17 @@ function play(i) {
 document.getElementById("restart").addEventListener("click", restart);
 
 function restart() {
-  window.location.reload();
+  queue = [];
+  winCounter = 0;
+  history = [];
+  shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
+  displayCards();
+  addListenerToCards();
+  setTimer();
+  if(timer.isTimerActive){
+    timer.stopTimer();
+  }
 }
 
-// TIMER
-const timer = new Timer({
-  minutes: 1,
-  seconds: 0,
-  minutesTextContent: document.getElementById("minutes").textContent,
-  secondsTextContent: document.getElementById("seconds").textContent,
-  timerDOMelement: document.getElementsByClassName("timer_wrapper")
-},restart)
-
-console.log(timer);
 
 
-// const timer = {
-//   minutes: localStorage.getItem("settings")?.timer ?? 1,
-//   seconds: 0,
-// };
-
-// const domMinutes = document.getElementById("minutes");
-// domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-// const domSeconds = document.getElementById("seconds");
-// domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
-
-// function startTimer() {
-//   const interval = setInterval(() => {
-//     if (timer.seconds === 0) {
-//       if (timer.minutes === 0) {
-//         clearInterval(timer);
-//         console.log('test');
-//         Swal.fire({
-//           title: "Вы проиграли",
-//           text: "Вы не успели найти все пары во время ):",
-//           icon: "error",
-//         }).then(() => clearInterval(interval));
-//       } else {
-//         timer.minutes--;
-//         timer.seconds = 59;
-//         domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-//         domSeconds.textContent = timer.seconds;
-//       }
-//     } else {
-//       timer.seconds--;
-//       domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
-//     }
-//   }, [1000]);
-
-//   return () => {
-//     clearInterval(interval);
-//   };
-// }

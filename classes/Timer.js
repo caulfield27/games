@@ -1,49 +1,36 @@
 class Timer {
   #minutes;
   #seconds;
-  #minutesTextContent;
-  #secondsTextContent;
+  #minutesDOMelement;
+  #secondsDOMelement;
   #interval;
-  #reset;
-  #timerDOMelement;
-  constructor(options, resetCb) {
+  #onTimeout;
+  constructor(options, onTimeout) {
     this.#minutes = options?.minutes;
     this.#seconds = options?.seconds;
-    this.#minutesTextContent = options?.minutesTextContent;
-    this.#secondsTextContent = options?.secondsTextContent;
+    this.#minutesDOMelement = options?.minutesDOMelement;
+    this.#secondsDOMelement = options?.secondsDOMelement;
     this.#interval = null;
-    this.#reset = resetCb;
-    this.#timerDOMelement = options?.timerDOMelement;
+    this.#onTimeout = onTimeout;
+    this.isTimerActive = false;
   }
 
   startTimer() {
-    const timer = setInterval(() => {
+    this.isTimerActive = true;
+    const timer = setInterval(() => {      
       if (this.#seconds === 0) {
         if (this.#minutes === 0) {
-          Swal.fire({
-            title: "Вы проиграли",
-            text: "Вы не успели найти все пары во время ):",
-            icon: "error",
-            confirmButtonText: "Попробовать ещё",
-          }).then((res) => {
-            if (res?.isConfirmed) {
-              this.#reset();
-            }
-            clearInterval(timer);
-          });
+          this.stopTimer();
+          this.#onTimeout();
         } else {
           this.#minutes--;
           this.#seconds = 59;
-          this.#minutesTextContent = this.#minutes < 10 ? `0${this.#minutes}` : this.#minutes;
-          this.#secondsTextContent = this.#seconds;
+          this.#minutesDOMelement.textContent = this.#minutes < 10 ? `0${this.#minutes}` : this.#minutes;
+          this.#secondsDOMelement.textContent = this.#seconds;
         }
       } else {
         this.#seconds--;
-        this.#secondsTextContent = this.#seconds < 10 ? `0${this.#seconds}` : this.#seconds;
-      }
-
-      if(this.#minutes === 0 && this.#seconds < 10){
-        this.#timerDOMelement.style.color = "red";
+        this.#secondsDOMelement.textContent = this.#seconds < 10 ? `0${this.#seconds}` : this.#seconds;
       }
     }, 1000);
     this.interval = timer;
@@ -51,6 +38,7 @@ class Timer {
 
   stopTimer() {
     if (this.interval) {
+      this.isTimerActive = false;
       clearInterval(this.interval);
     }
   }
