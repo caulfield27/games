@@ -1,5 +1,5 @@
 export const levels = {
-  лёгкий: {
+  easy: {
     rows: 10,
     cols: 8,
     mines: 10,
@@ -7,7 +7,7 @@ export const levels = {
     mineSize: "35px",
     flagSize: "35px",
   },
-  средний: {
+  medium: {
     rows: 18,
     cols: 14,
     mines: 40,
@@ -15,7 +15,7 @@ export const levels = {
     mineSize: "30px",
     flagSize: "25px",
   },
-  сложный: {
+  hard: {
     rows: 24,
     cols: 20,
     mines: 99,
@@ -25,15 +25,15 @@ export const levels = {
   },
 };
 
-export const level = levels[localStorage.getItem("level") || "лёгкий"];
+export const level = levels[localStorage.getItem("level") || "medium"];
 
 const rows = level.rows;
 let edgeTrack = level.rows - 1;
 const leftEdge = new Set();
 const rightEdge = new Set();
 
-export function getFields() {
-  return new Array(rows * level.cols).fill(null).map((_, i) => {
+export function getFields(lvl) {
+  return new Array(rows * lvl.cols).fill(null).map((_, i) => {
     if (i === edgeTrack) {
       leftEdge.add(edgeTrack + 1);
       rightEdge.add(edgeTrack + rows);

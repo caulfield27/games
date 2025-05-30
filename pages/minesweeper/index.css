@@ -6,11 +6,6 @@ body{
     background: whitesmoke;
 }
 
-.sidebar_info{
-    background: #59200f;
-    margin-top: 10px;
-    padding: 20px;
-}
 
 .mainsweeper_wrapper{
     width: 100%;
@@ -20,6 +15,23 @@ body{
     align-items: flex-start;
     flex-direction: row;
     gap: 30px;
+}
+
+.level_form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 36px 16px 0 0;
+}
+
+.level_form label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
 }
 
 .mainsweeper_container{

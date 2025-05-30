@@ -8,8 +8,21 @@
     <link rel="stylesheet" href="/lib/sweetalert2.min.css">
 </head>
 <body>
-    <div>Mainsweeper</div>
     <div class="mainsweeper_wrapper" >
+        <form id="level_form" class="level_form">
+            <label>
+                <input type="radio" name="level" id="easy" value="easy">
+                <span>easy</span>
+            </label>
+            <label>
+                <input type="radio" name="level" id="medium" value="medium">
+                <span>medium</span>
+            </label>
+            <label>
+                <input type="radio" name="level" id="hard" value="hard">
+                <span>hard</span>
+            </label>
+        </form>
         <div class="game_board" id="board">
             <div class="tablo">
                 <div class="tablo_content">

@@ -3,14 +3,14 @@ import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
 import { killSmile, smileIsAlive } from "./drawSVG.js";
 
 const rows = level.rows;
-let fields = getFields();
+let fields = getFields(level);
 let isGameStart = false;
 let isGameOver = false;
 let intervalCancel = null;
 let flagsCounter = level.mines;
 
-function restart() {
-  fields = getFields();
+function restart(newLvl = level) {
+  fields = getFields(newLvl);
   isGameStart = false;
   isGameOver = false;
   flagsCounter = level.mines;
@@ -24,6 +24,11 @@ function restart() {
 
 const smile = document.getElementById("smile");
 smile.addEventListener("click", restart);
+
+document.getElementById("level_form").addEventListener("change", (ev)=>{
+  localStorage.setItem("level", ev.target.value);
+  restart(ev.target.value);
+})
 
 const container = document.getElementById("container");
 const flagsCounterDigits = [

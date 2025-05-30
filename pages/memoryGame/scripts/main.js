@@ -5,14 +5,43 @@ import { images } from "./constants.js";
 let settings = localStorage.getItem("settings")
   ? JSON.parse(localStorage.getItem("settings"))
   : {
-    time: {
-      minutes: 1,
-      seconds: 0
-    },
-    quantity: "12",
-    category: "humo",
-  };
+      timer: {
+        minutes: 1,
+        seconds: 0,
+      },
+      quantity: "12",
+      category: "humo",
+    };
+
 let shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
+let container = document.getElementById("cards_container");
+let cards = document.getElementsByClassName("content_wrap");
+const defaultImage = "./images/others/question.png";
+let queue = [];
+let winCounter = 0;
+let history = [];
+const domMinutes = document.getElementById("minutes");
+const domSeconds = document.getElementById("seconds");
+const timer = new Timer(
+  {
+    minutes: settings?.timer?.minutes ?? 1,
+    seconds: settings?.timer?.seconds ?? 0,
+    minutesDOMelement: domMinutes,
+    secondsDOMelement: domSeconds,
+  },
+  () =>
+    Swal.fire({
+      title: "Вы проиграли",
+      text: "Вы не успели найти все пары во время ):",
+      icon: "error",
+      confirmButtonText: "Попробовать ещё",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        restart();
+      }
+    })
+);
+timer.resetTimer();
 
 function shuffleCards(data) {
   let shuffledArr = [];
@@ -74,7 +103,7 @@ document.getElementById("settings").addEventListener("click", () => {
       settings = {
         timer: {
           minutes: validMinutes < 0 ? 0 : validMinutes,
-          seconds: validSeconds < 0 ? 30 : validSeconds
+          seconds: validSeconds < 0 ? 30 : validSeconds,
         },
         quantity,
         category,
@@ -89,78 +118,37 @@ document.getElementById("settings").addEventListener("click", () => {
   document.getElementById("quantity").value = settings["quantity"];
   document.getElementById("category").value = settings["category"];
   document.getElementById("min").value = settings["timer"]["minutes"];
-  document.getElementById("sec").value = settings["timer"]["seconds"]
+  document.getElementById("sec").value = settings["timer"]["seconds"];
 });
 
 // VIEW
 
-let container = document.getElementById("cards_container");
-let cards = document.getElementsByClassName("content_wrap");
-const defaultImage = "./images/others/question.png";
-
 function displayCards() {
   const { quantity } = settings;
-  container.style.maxWidth = quantity === "10" || quantity === "16" ? "600px" : quantity === "20" ? "700px" : "1000px"
+  container.style.maxWidth =
+    quantity === "10" || quantity === "16" ? "600px" : quantity === "20" ? "700px" : "1000px";
   container.innerHTML = `
         ${shuffled
-      .map(
-        (image) =>
-          `<div class="card">
+          .map(
+            (image) =>
+              `<div class="card">
                 <div class="content_wrap">
                     <img src="${defaultImage}" class="img front" />
                     <img src="${image.src}" class="img back" />
                 </div>
             </div>`
-      )
-      .join("")}`;
+          )
+          .join("")}`;
 }
-
 
 function run() {
   displayCards();
   addListenerToCards();
-
 }
 
 run();
 
-//TIMER
-
-const domMinutes = document.getElementById("minutes");
-const domSeconds = document.getElementById("seconds");
-const timer = new Timer({
-  minutes: 1,
-  seconds: 0,
-  minutesDOMelement: domMinutes,
-  secondsDOMelement: domSeconds,
-},
-  () => Swal.fire({
-    title: "Вы проиграли",
-    text: "Вы не успели найти все пары во время ):",
-    icon: "error",
-    confirmButtonText: "Попробовать ещё"
-  }).then((res) => {
-    if (res.isConfirmed) {
-      restart()
-    }
-  }
-  ))
-
-function setTimer() {
-  const {timer} = settings;
-  domMinutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-  domSeconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
-}
-
-setTimer();
-
-
-
 // GAME LOGIC
-
-let queue = [];
-let winCounter = 0;
-let history = [];
 
 function addListenerToCards() {
   for (let i = 0; i < cards.length; i++) {
@@ -222,11 +210,8 @@ function restart() {
   shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
   displayCards();
   addListenerToCards();
-  setTimer();
-  if(timer.isTimerActive){
+  timer.resetTimer();
+  if (timer.isTimerActive) {
     timer.stopTimer();
   }
 }
-
-
-
