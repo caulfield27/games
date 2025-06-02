@@ -1,65 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minesweeper</title>
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="/lib/sweetalert2.min.css">
-</head>
-<body>
-    <div class="mainsweeper_wrapper" >
-        <form id="level_form" class="level_form">
-            <label>
-                <input type="radio" name="level" id="easy" value="easy">
-                <span>easy</span>
-            </label>
-            <label>
-                <input type="radio" name="level" id="medium" value="medium">
-                <span>medium</span>
-            </label>
-            <label>
-                <input type="radio" name="level" id="hard" value="hard">
-                <span>hard</span>
-            </label>
-        </form>
-        <div class="game_board" id="board">
-            <div class="tablo">
-                <div class="tablo_content">
-                    <div class="tablo_flag">
-                        <div class="clock">
-                            <div class="digit" id="first_num"></div>
-                            <div class="digit" id="second_num"></div>
-                            <div class="digit" id="third_num"></div>
-                        </div>
-                    </div>
-                    <div class="smile_container" id="smile" role="button">
-                        <svg width="80" height="80" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45" fill="yellow" stroke="black" stroke-width="3"/>
-                            <rect x="20" y="30" width="20" height="10" fill="black"/>
-                            <rect x="60" y="30" width="20" height="10" fill="black"/>
-                            <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="3"/>
-                            <path d="M30 65 Q50 85, 70 65" stroke="black" stroke-width="3" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="timer_container">
-                        <div class="clock">
-                            <div class="digit" id="first_timer"></div>
-                            <div class="digit" id="second_timer"></div>
-                            <div class="digit" id="third_timer"></div>
-                        </div>
-                    </div>
-                </div>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
+  </head>
+  <body>
+    <button id="dropdown_btn" class="dropdown_btn">
+      <ul>
+        <li>easy</li>
+        <li>medium</li>
+        <li>hard</li>
+      </ul>
+    </button>
+    <div class="mainsweeper_wrapper">
+      <div class="game_board" id="board">
+        <div class="tablo">
+          <div class="tablo_content">
+            <div class="tablo_flag">
+              <div class="clock">
+                <div class="digit" id="first_num"></div>
+                <div class="digit" id="second_num"></div>
+                <div class="digit" id="third_num"></div>
+              </div>
             </div>
-            <div class="mainsweeper_container" id="container">
+            <div class="smile_container" id="smile" role="button">
+              <svg width="80" height="80" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="yellow" stroke="black" stroke-width="3" />
+                <rect x="20" y="30" width="20" height="10" fill="black" />
+                <rect x="60" y="30" width="20" height="10" fill="black" />
+                <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="3" />
+                <path d="M30 65 Q50 85, 70 65" stroke="black" stroke-width="3" fill="none" />
+              </svg>
             </div>
+            <div class="timer_container">
+              <div class="clock">
+                <div class="digit" id="first_timer"></div>
+                <div class="digit" id="second_timer"></div>
+                <div class="digit" id="third_timer"></div>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="mainsweeper_container" id="container"></div>
+      </div>
     </div>
-    
-<script src="scripts/main.js" type="module"></script>
-<script src="scripts/data.js" type="module"></script>
-<script src="scripts/digits.js" type="module"></script>
-<script src="scripts/drawSVG.js" type="module"></script>
-<script src="/lib/sweetalert2.min.js"></script>
-</body>
+
+    <script src="scripts/main.js" type="module"></script>
+    <script src="scripts/data.js" type="module"></script>
+    <script src="scripts/digits.js" type="module"></script>
+    <script src="scripts/drawSVG.js" type="module"></script>
+    <script src="/lib/sweetalert2.min.js"></script>
+  </body>
 </html>

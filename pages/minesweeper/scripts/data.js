@@ -25,15 +25,14 @@ export const levels = {
   },
 };
 
-export const level = levels[localStorage.getItem("level") || "medium"];
+window.level = levels['medium'];
 
-const rows = level.rows;
-let edgeTrack = level.rows - 1;
-const leftEdge = new Set();
-const rightEdge = new Set();
-
-export function getFields(lvl) {
-  return new Array(rows * lvl.cols).fill(null).map((_, i) => {
+export function getFields(level) {
+  const rows = level.rows;
+  let edgeTrack = level.rows - 1;
+  const leftEdge = new Set();
+  const rightEdge = new Set();
+  return new Array(rows * level.cols).fill(null).map((_, i) => {
     if (i === edgeTrack) {
       leftEdge.add(edgeTrack + 1);
       rightEdge.add(edgeTrack + rows);

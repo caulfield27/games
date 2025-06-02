@@ -1,4 +1,4 @@
-import { digitSegments, level } from "./data.js";
+import { digitSegments } from "./data.js";
 
 const firstDigit = document.getElementById("first_num");
 const secondDigit = document.getElementById("second_num");
@@ -24,7 +24,7 @@ export function updateTablo(num = "000", parents) {
   });
 }
 
-export function displayDigits() {
+export function displayDigits(mines) {
   [firstDigit, secondDigit, thirdDigit].forEach((digit) => {
     digit.innerHTML = ["a", "b", "c", "d", "e", "f", "g"]
       .map(
@@ -35,7 +35,7 @@ export function displayDigits() {
       .join("");
   });
 
-  updateTablo(level.mines, [firstDigit, secondDigit, thirdDigit]);
+  updateTablo(mines, [firstDigit, secondDigit, thirdDigit]);
 }
 
 const timerElements = [
