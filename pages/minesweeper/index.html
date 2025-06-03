@@ -6,16 +6,17 @@
     <title>Minesweeper</title>
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
+    <link rel="stylesheet" href="/components/dropdown/dropdown.css" />
   </head>
   <body>
-    <button id="dropdown_btn" class="dropdown_btn">
-      <ul>
-        <li>easy</li>
-        <li>medium</li>
-        <li>hard</li>
-      </ul>
-    </button>
     <div class="mainsweeper_wrapper">
+      <div class="my_dropdown_wrapper">
+        <my-dropdown
+          id="my_dropdown"
+          placeholder="Выберите сложность"
+          options='["Easy","Medium","Hard"]'
+        ></my-dropdown>
+      </div>
       <div class="game_board" id="board">
         <div class="tablo">
           <div class="tablo_content">
@@ -53,5 +54,6 @@
     <script src="scripts/digits.js" type="module"></script>
     <script src="scripts/drawSVG.js" type="module"></script>
     <script src="/lib/sweetalert2.min.js"></script>
+    <script src="/components/dropdown/dropdown.js" defer></script>
   </body>
 </html>

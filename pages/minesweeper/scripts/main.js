@@ -13,6 +13,7 @@ let intervalCancel = null;
 let flagsCounter = level.mines;
 const smile = document.getElementById("smile");
 const container = document.getElementById("container");
+const options = document.getElementById("my_dropdown");
 const flagsCounterDigits = [
   document.getElementById("first_num"),
   document.getElementById("second_num"),
@@ -22,15 +23,17 @@ const flagsCounterDigits = [
 // STRAIGHT LISTENERS
 
 smile.addEventListener("click", restart);
-// document.getElementById("level_form").addEventListener("change", (ev) => {
-//   const newLvl = levels[ev.target.value];
-//   if (newLvl) {
-//     level = newLvl;
-//     restart();
-//   }
-// });
+document.addEventListener("DOMContentLoaded", render);
+options.addEventListener("change", (event) => {
+  const newLvl = levels[event?.detail?.value?.toLowerCase()];
+  
+  if (newLvl) {
+    level = newLvl;
+    restart();
+  }
+});
 
-// RENDER
+// HELPER FUNCTIONS
 
 function render() {
   setField(fields);
@@ -38,11 +41,9 @@ function render() {
   setTimer();
   container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
   container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
-}
+};
 
-render();
 
-// HELPER FUNCTIONS
 
 function generateMines(firstInd) {
   // GENERATE MINES ON GAME START
@@ -57,6 +58,8 @@ function generateMines(firstInd) {
   }
 }
 
+
+
 function isWin(fields, mines) {
   // CHECKING WIN CONDITION
   let openCounter = 0;
@@ -68,12 +71,17 @@ function isWin(fields, mines) {
   return openCounter + mines === fields.length;
 }
 
-function gameOver(failIndex) {
+
+
+function gameOver(failIndex, type = "mine") {
   // LOSE CASE HANDLER
   Swal.fire({
     icon: "error",
     title: "Вы проиграли",
-    text: "К сожалению, вы наступили на мину.",
+    text:
+      type === "mine"
+        ? "К сожалению, вы наступили на мину :("
+        : "К сожалению вы не успели найти все мину во время :(",
     showCancelButton: true,
     confirmButtonText: "Попробовать ещё раз",
     cancelButtonText: "Посмотреть результат",
@@ -94,6 +102,8 @@ function gameOver(failIndex) {
     }
   });
 }
+
+
 
 function checkField(i, buttons) {
   // RECURSIVE CHECK MINES AROUND
@@ -178,6 +188,8 @@ function checkField(i, buttons) {
   }
 }
 
+
+
 function restart() {
   // RESET ALL STATES
   fields = getFields(level);
@@ -193,6 +205,8 @@ function restart() {
   render();
 }
 
+
+
 function generateFields(filedsAmount) {
   // CREATE BUTTONS FOR GAME
   let html = "";
@@ -202,6 +216,8 @@ function generateFields(filedsAmount) {
 
   return html;
 }
+
+
 
 function setField() {
   // SET CONTAINER AND ADD LISTENERS
@@ -242,7 +258,7 @@ function setField() {
 
       if (!isGameStart) {
         isGameStart = true;
-        intervalCancel = startTimer();
+        intervalCancel = startTimer(() => gameOver(null, "time"));
         generateMines(buttonInd);
       }
 
@@ -266,7 +282,7 @@ function setField() {
 
       if (isWin(fields, level.mines)) {
         if (intervalCancel) {
-          clearInterval(intervalCancel);
+          intervalCancel();
         }
         setTimeout(() => {
           Swal.fire({

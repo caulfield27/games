@@ -25,7 +25,7 @@ export const levels = {
   },
 };
 
-window.level = levels['medium'];
+window.level = levels['easy'];
 
 export function getFields(level) {
   const rows = level.rows;

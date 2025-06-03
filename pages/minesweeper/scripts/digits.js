@@ -60,11 +60,12 @@ export function setTimer() {
 
 window.minesweeperSeconds = 0;
 
-export function startTimer(){
+export function startTimer(handleEndTimer){
     updateTablo(window.minesweeperSeconds,timerElements);
     const interval = setInterval(()=>{
-        if(window.minesweeperSeconds === 1000){
-          
+        if(window.minesweeperSeconds === 999){
+          clearInterval(interval);
+          handleEndTimer();
         }else{
           window.minesweeperSeconds++;
           updateTablo(window.minesweeperSeconds,timerElements);
