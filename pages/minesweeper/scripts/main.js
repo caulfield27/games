@@ -1,6 +1,9 @@
-import { getFields, levels } from "./data.js";
+import { dropdownOptions, getFields, levels } from "./data.js";
 import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
 import { killSmile, smileIsAlive } from "./drawSVG.js";
+import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
+
+handleDocumentLoading(render);
 
 // VARIABLES
 
@@ -23,10 +26,11 @@ const flagsCounterDigits = [
 // STRAIGHT LISTENERS
 
 smile.addEventListener("click", restart);
-document.addEventListener("DOMContentLoaded", render);
+options.setAttribute("options", JSON.stringify(dropdownOptions));
+options.setAttribute("value", level?.label ?? "Лёгкий");
 options.addEventListener("change", (event) => {
-  const newLvl = levels[event?.detail?.value?.toLowerCase()];
-  
+  const newLvl = levels[event?.detail?.value];
+
   if (newLvl) {
     level = newLvl;
     restart();
@@ -36,14 +40,13 @@ options.addEventListener("change", (event) => {
 // HELPER FUNCTIONS
 
 function render() {
+  container.classList.add("mainsweeper_container");
   setField(fields);
   displayDigits(level.mines);
   setTimer();
   container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
   container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
-};
-
-
+}
 
 function generateMines(firstInd) {
   // GENERATE MINES ON GAME START
@@ -58,8 +61,6 @@ function generateMines(firstInd) {
   }
 }
 
-
-
 function isWin(fields, mines) {
   // CHECKING WIN CONDITION
   let openCounter = 0;
@@ -70,8 +71,6 @@ function isWin(fields, mines) {
   }
   return openCounter + mines === fields.length;
 }
-
-
 
 function gameOver(failIndex, type = "mine") {
   // LOSE CASE HANDLER
@@ -102,8 +101,6 @@ function gameOver(failIndex, type = "mine") {
     }
   });
 }
-
-
 
 function checkField(i, buttons) {
   // RECURSIVE CHECK MINES AROUND
@@ -188,8 +185,6 @@ function checkField(i, buttons) {
   }
 }
 
-
-
 function restart() {
   // RESET ALL STATES
   fields = getFields(level);
@@ -205,8 +200,6 @@ function restart() {
   render();
 }
 
-
-
 function generateFields(filedsAmount) {
   // CREATE BUTTONS FOR GAME
   let html = "";
@@ -216,8 +209,6 @@ function generateFields(filedsAmount) {
 
   return html;
 }
-
-
 
 function setField() {
   // SET CONTAINER AND ADD LISTENERS

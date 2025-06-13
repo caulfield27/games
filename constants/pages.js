@@ -8,5 +8,10 @@ export const pages = [
         name: "Memory game",
         icon: "./assets/memory.avif",
         href: "./pages/memoryGame/index.html",
+    },
+    {
+        name: "Battleship",
+        icon: "./assets/battleship.png",
+        href: "./pages/battleship/index.html"
     }
 ]

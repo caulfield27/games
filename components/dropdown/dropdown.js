@@ -1,10 +1,9 @@
 class Dropdown extends HTMLElement {
   #prevChoose;
-  #ul;
   constructor() {
     super();
     this.options = this.getAttribute("options");
-    this.placeholder = this.getAttribute("placeholder");
+    this.value = this.getAttribute("value") ?? "Выбрать";
     this.#prevChoose = null;
   }
 
@@ -24,7 +23,7 @@ class Dropdown extends HTMLElement {
       };
 
       btn.appendChild(span);
-      span.textContent = this.placeholder ?? "Выберите";
+      span.textContent = this.value;
 
       btn.classList.add("my_dropdown_btn");
       ul.classList.add("my_dropdown_ul", "not_active");
@@ -38,21 +37,22 @@ class Dropdown extends HTMLElement {
         ul.classList.toggle("not_active");
       });
 
-      parsedOptions.forEach((val) => {
+      parsedOptions.forEach((option) => {
+        const {value, title} = option
         const list = document.createElement("li");
-        list.value = val;
-        list.textContent = val;
+        list.value = value;
+        list.textContent = title;
         list.classList.add("my_dropdown_list_item");
         list.addEventListener("click", (e) => {
           e.stopPropagation();
           this.dispatchEvent(
             new CustomEvent("change", {
-              detail: { value: val },
+              detail: { value },
             })
           );
           list.classList.add("active_li");
           ul.classList.add("not_active");
-          span.textContent = val;
+          span.textContent = title;
           if (!this.#prevChoose) {
             this.#prevChoose = list;
           } else {

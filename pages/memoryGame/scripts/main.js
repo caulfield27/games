@@ -1,4 +1,5 @@
 import { images } from "./constants.js";
+import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
 
 // SETTINGS
 
@@ -125,6 +126,7 @@ document.getElementById("settings").addEventListener("click", () => {
 
 function displayCards() {
   const { quantity } = settings;
+  container.classList.add("cards_container_active");
   container.style.maxWidth =
     quantity === "10" || quantity === "16" ? "600px" : quantity === "20" ? "700px" : "1000px";
   container.innerHTML = `
@@ -141,12 +143,12 @@ function displayCards() {
           .join("")}`;
 }
 
-function run() {
+function onLoad() {
   displayCards();
   addListenerToCards();
 }
 
-run();
+handleDocumentLoading(onLoad);
 
 // GAME LOGIC
 

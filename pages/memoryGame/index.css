@@ -1,168 +1,168 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
 
 body,
 html {
-    width: 100%;
-    height: 100vh;
-    font-family: "New Amsterdam", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    letter-spacing: 5px;
-    color: white;
+  width: 100%;
+  height: 100vh;
+  font-family: "New Amsterdam", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 5px;
+  color: white;
 }
 
 button {
-    border: none;
-    outline: none;
-    cursor: pointer;
+  border: none;
+  outline: none;
+  cursor: pointer;
 }
 
 #app_container {
-    padding: 30px 0 0 0;
-    margin: auto;
+  padding: 30px 0 0 0;
+  margin: auto;
 }
 
 .header {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    align-items: center;
-    margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .header h1 {
-    color: #CB9DF0;
+  color: #cb9df0;
+}
+
+.cards_container_active {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: center;
+  justify-content: center;
 }
 
 #cards_container {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    background: ghostwhite;
-    gap: 10px;
-    align-content: center;
-    justify-content: center;
-    padding: 40px;
-    border-radius: 8px;
-    border: 12px solid #CB9DF0;
-    margin: 28px auto;
+  position: relative;
+  background: ghostwhite;
+  padding: 40px;
+  border-radius: 8px;
+  border: 12px solid #cb9df0;
+  margin: 28px auto;
+  display: none;
 }
-
 
 .card {
-    perspective: 1000px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    border: 3px solid #CB9DF0;
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
-    background: white;
-    transition: scale 0.2s linear;
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border: 3px solid #cb9df0;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  background: white;
+  transition: scale 0.2s linear;
 }
 
-.card:hover{
-    scale: 1.01;
+.card:hover {
+  scale: 1.01;
 }
 
 .content_wrap {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: 0.5s linear;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: 0.5s linear;
 }
 
 .front,
 .back {
-    position: absolute;
-    top: 13px;
-    left: 10px;
-    backface-visibility: hidden;
-    width: 80px;
-    height: 60px;
+  position: absolute;
+  top: 13px;
+  left: 10px;
+  backface-visibility: hidden;
+  width: 80px;
+  height: 60px;
 }
 
 .back {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
-
-
 .active {
-    transform: rotateY(180deg);
-    pointer-events: none;
+  transform: rotateY(180deg);
+  pointer-events: none;
 }
 
 .buttons_wrap {
-    display: flex;
-    flex-direction: row;
-    gap: 25px;
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
 }
 
 .buttons_wrap img {
-    width: 20px;
+  width: 20px;
 }
 
 .buttons_wrap button {
-    background: transparent;
-    transition: all 0.2s linear;
+  background: transparent;
+  transition: all 0.2s linear;
 }
 
 .buttons_wrap button:hover {
-    scale: 0.96;
+  scale: 0.96;
 }
 
-.settings_container{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.settings_container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .setting_wrap {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .setting_wrap select {
-    background: gainsboro;
-    border: none;
-    outline: brown;
-    padding: 5px 8px;
-    border-radius: 8px;
-    cursor: pointer;
+  background: gainsboro;
+  border: none;
+  outline: brown;
+  padding: 5px 8px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.timer_wrapper{
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1px solid gainsboro;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
+.timer_wrapper {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid gainsboro;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
-.timer_wrapper span{
-    color: #ff8a4b;
-    font-size: 24px;
-    font-weight: 600;
+.timer_wrapper span {
+  color: #ff8a4b;
+  font-size: 24px;
+  font-weight: 600;
 }
 
-.timer_inputs input{
-    border: 1px solid gainsboro;
-    border-radius: 6px;
-    outline: #CB9DF0;
-    padding: 3px;
+.timer_inputs input {
+  border: 1px solid gainsboro;
+  border-radius: 6px;
+  outline: #cb9df0;
+  padding: 3px;
 }

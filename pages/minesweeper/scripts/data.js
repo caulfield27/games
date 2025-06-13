@@ -1,5 +1,6 @@
 export const levels = {
   easy: {
+    label: "Лёгкий",
     rows: 10,
     cols: 8,
     mines: 10,
@@ -8,6 +9,7 @@ export const levels = {
     flagSize: "35px",
   },
   medium: {
+    label: "Средний",
     rows: 18,
     cols: 14,
     mines: 40,
@@ -16,6 +18,7 @@ export const levels = {
     flagSize: "25px",
   },
   hard: {
+    label: "Сложный",
     rows: 24,
     cols: 20,
     mines: 99,
@@ -24,6 +27,21 @@ export const levels = {
     flagSize: "20px",
   },
 };
+
+export const dropdownOptions = [
+  {
+    title: "Лёгкий",
+    value: "easy"
+  },
+  {
+    title: "Средний",
+    value: "medium"
+  },
+  {
+    title: "Сложный",
+    value: "hard"
+  }
+]
 
 window.level = levels['easy'];
 

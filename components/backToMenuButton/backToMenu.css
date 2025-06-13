@@ -1,0 +1,31 @@
+.back_to_menu_btn{
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #0000c7;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.back_to_menu_btn img{
+    width: 20px;
+}
+
+.back_to_menu_btn span{
+    color: white;
+    font-size: 16px;
+}
+
+.back_to_menu_btn:hover{
+    background: #22009c;
+}
