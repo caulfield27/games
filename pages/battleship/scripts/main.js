@@ -34,9 +34,20 @@ function drawBattlefields() {
     myField.classList.add("battle_field");
     opponentField.classList.add("battle_field");
 
-    const ship = document.createElement("div");
-    ship.innerHTML = thirdTierShip();
-    myField.appendChild(ship);
+    const ship1 = document.createElement("div");
+    const ship2 = document.createElement("div");
+    const ship3 = document.createElement("div");
+    const ship4 = document.createElement('div');
+    
+    ship1.innerHTML = firstTierShip();
+    ship2.innerHTML = secondTierShip();
+    ship3.innerHTML = thirdTierShip();
+    ship4.innerHTML = fourthTierShip();
+    
+    [ship1, ship2, ship3, ship4].forEach((elem)=>{
+        myField.appendChild(elem);
+    });
+
 
     let row = 2;
     let col = 2;
