@@ -70,105 +70,11 @@ function randomlyArrangeShip(shipSize) {
 
     return { x: [x], y: [y], dir };
   } else {
-    let res = {};
-    let isArranged = false;
-    while (!isArranged) {
-      const y = directions[Math.floor(Math.random() * directions.length)];
-      const xDirections = directionsHash[y];
-      let xIndex = Math.floor(Math.random() * xDirections.length);
-      const x = xDirections[xIndex];
 
-      for (let i = 1; i < shipSize; i++) {
-        if (
-          xDirections[xIndex + 1] - xDirections[xIndex] !== 1 ||
-          (directionsHash[y + 1] && !directionsHash[y + 1].includes(xDirections[xIndex])) ||
-          (directionsHash[y - 1] && !directionsHash[y - 1].includes(xDirections[xIndex]))
-        ) {
-          break;
-        }
-
-        xIndex++;
-        if (i === shipSize - 1) {
-          isArranged = true;
-          const ship = [];
-          let j = x;
-          for (let k = 1; k < shipSize; k++) {
-            battlefieldMatrix[y][j] = true;
-            ship.push(j);
-            j++;
-          }
-          const left = ship[0] - 1;
-          const right = ship[ship.length - 1] + 1;
-
-          directionsHash[y] = filterDirections([left, ...ship, right], directionsHash[y]);
-          if (directionsHash[y - 1]) {
-            directionsHash[y - 1] = filterDirections([left, ...ship, right], directionsHash[y - 1]);
-          }
-          if (directionsHash[y + 1]) {
-            directionsHash[y + 1] = filterDirections([left,...ship,right], directionsHash[y + 1]);
-          }
-
-          res = {x: [ship[0],ship[ship.length-1]], y: [y], dir: 1};
-        }
-      }
-
-      if (isArranged) {
-        break;
-      }
-
-      for (let i = 1; i < shipSize; i++) {
-        if (
-          xDirections[xIndex] - xDirections[xIndex - 1] !== 1 ||
-          (directionsHash[y + 1] && !directionsHash[y + 1].includes(xDirections[xIndex])) ||
-          (directionsHash[y - 1] && !directionsHash[y - 1].includes(xDirections[xIndex]))
-        ) {
-          break;
-        }
-
-        xIndex--;
-        if (i === shipSize - 1) {
-          isArranged = true;
-          const ship = [];
-          let j = x;
-          for (let k = 1; k < shipSize; k++) {
-            battlefieldMatrix[y][j] = true;
-            ship.push(j);
-            j--;
-          }
-          const left = ship[0] - 1;
-          const right = ship[ship.length - 1] + 1;
-
-          directionsHash[y] = filterDirections([left, ...ship, right], directionsHash[y]);
-          if (directionsHash[y - 1]) {
-            directionsHash[y - 1] = filterDirections([left, ...ship, right], directionsHash[y - 1]);
-          }
-          if (directionsHash[y + 1]) {
-            directionsHash[y + 1] = filterDirections([left, ...ship, right], directionsHash[y + 1]);
-          }
-          
-          res = {x: [ship[ship.length-1],ship[0]], y: [y], dir: 1}
-        }
-      }
-
-      // if (isArranged) {
-      //   break;
-      // }
-
-      // for (let i = 1; i < shipSize; i++) {
-      //   break;
-      // }
-
-      // if (isArranged) {
-      //   break;
-      // }
-
-      // for (let i = 1; i < shipSize; i++) {
-      //   break;
-      // }
-    }
-
-    return res;
   }
+
+  return res;
+
 }
 
 function drawBattlefields() {
@@ -271,13 +177,13 @@ function arrangeShips() {
   const ship3 = document.createElement("div");
   ship3.role = "button";
   ship3.innerHTML = thirdTierShip();
-  const {x,y,dir} = randomlyArrangeShip(3);
+  const { x, y, dir } = randomlyArrangeShip(3);
 
-  if(dir === 1){
+  if (dir === 1) {
     ship3.style.transform = `rotate(90deg)`;
   };
-  ship3.style.gridRow = y[0]+2;
-  ship3.style.gridColumn = `${(x[0]+2)}/ span ${(x[1]+2) - (x[0]+2)}`;
+  ship3.style.gridRow = y[0] + 2;
+  ship3.style.gridColumn = `${(x[0] + 2)}/ span ${(x[1] + 2) - (x[0] + 2)}`;
   myField.appendChild(ship3);
 
 }
@@ -294,5 +200,5 @@ function filterDirections(ship, array) {
 
 function render() {
   drawBattlefields();
-  arrangeShips();
+  // arrangeShips();
 }
