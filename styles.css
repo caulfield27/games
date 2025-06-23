@@ -1,13 +1,108 @@
 html,body{
-    font-family: monospace;
+    font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    color: #242424;
+    color: var(--primary-text-color);
     font-size: 24px;
 }
 
+body{
+    padding: 50px 0;
+    background-color: #EEF4F7;
+}
+
 .main_page_wrapper{
-    max-width: 1000px;
-    margin: 50px auto;
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_page_filters{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_page_input_wrapper{
+    position: relative;
+}
+
+.main_page_input_wrapper input{
+    min-width: 400px;
+    border: none;
+    outline: none;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0px 2px #0000001c;
+    padding: 12px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-text-color);
+
+}
+
+.main_page_input_wrapper input::placeholder{
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.main_page_search_icon{
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-text-color);
+    font-size: 20px;
+    color: gray;
+}
+
+.main_page_tags_container{
+    min-width: 600px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.main_page_tags_container span{
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid gainsboro;
+    background-color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: default;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.main_page_tags_container button{
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 2px 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_page_tags_container button:hover{
+    background: gainsboro;
 }
 
 .main_page_container{
@@ -19,34 +114,87 @@ html,body{
     align-items: flex-start;
 }
 
-.main_page_article{
+.main_page_card_wrapper{
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    justify-content: center;
-    align-items: center;
-    padding: 14px 24px;
-    border: 1px solid gainsboro;
-    border-radius: 10px;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.main_page_article{
+    width: 350px;
+    height: 175px;
+    overflow: hidden;
+    box-shadow: 0px 2px var(--primary-bg);
+    border-radius: 8px;
+    transition: border 300ms;
+    cursor: pointer;
+
 }
 
 .main_page_article img{
-    width: 120px;
-    height: 120px;
-}
-
-.main_page_article button{
     width: 100%;
-    border: none;
-    outline: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #1063ff;
-    color: #fff;
-    transition:  background 0.4s ease-out;
+    height: 100%;
+    object-fit: cover;
+    transition: scale 300ms;
 }
 
-.main_page_article button:hover{
-    background: #0003c4;
+.main_page_article img:hover{
+    scale: 1.2;
+}
+
+.main_page_article:hover{
+    border: 1px solid #292929;
+}
+
+.main_page_info_wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.main_page_info_wrapper a{
+    text-decoration: none;
+    color: var(--primary-text-color);
+    font-weight: 800;
+}
+
+.main_page_info_wrapper a:hover{
+    text-decoration: underline;
+}
+
+.main_page_info_wrapper div{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+
+
+.main_page_info_wrapper span{
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+    cursor: pointer;
+}
+
+.main_page_info_wrapper span:hover{
+    border-bottom: 2px solid var(--primary-text-color);
+}
+
+.main_page_info_wrapper span:not(:last-child)::after{
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: grey;
 }
