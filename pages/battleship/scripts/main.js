@@ -36,7 +36,7 @@ const battlefieldMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
   [false, false, false, false, false, false, false, false, false, false],
 ];
-const directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+let directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const directionsHash = {
   0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -53,56 +53,31 @@ const directionsHash = {
 // helper functions
 
 function randomlyArrangeShip(shipSize) {
-  let dir = null;
   if (shipSize === 1) {
     const y = directions[Math.floor(Math.random() * directions.length)];
     const xDirections = directionsHash[y];
     const x = xDirections[Math.floor(Math.random() * xDirections.length)];
 
     battlefieldMatrix[y][x] = true;
-    if (battlefieldMatrix[y][x + 1] !== undefined) {
-      battlefieldMatrix[y][x + 1] = null;
-    };
-    if (battlefieldMatrix[y][x - 1] !== undefined) {
-      battlefieldMatrix[y][x - 1] = null;
-    }
-
     directionsHash[y] = filterDirections([x, x + 1, x - 1], directionsHash[y]);
-
-    if (battlefieldMatrix[y][x + 1] !== undefined) {
-      battlefieldMatrix[y][x + 1] = null;
-    }
-
-    if (battlefieldMatrix[y][x - 1] !== undefined) {
-      battlefieldMatrix[y][x - 1] = null;
-    }
 
     if (directionsHash[y - 1]) {
       directionsHash[y - 1] = filterDirections([x, x - 1, x + 1], directionsHash[y - 1]);
-      battlefieldMatrix[y - 1][x] = null;
-      if (battlefieldMatrix[y - 1][x + 1] !== undefined) {
-        battlefieldMatrix[y - 1][x + 1] = null;
-      };
-      if (battlefieldMatrix[y - 1][x - 1] !== undefined) {
-        battlefieldMatrix[y - 1][x - 1] = null;
-      }
     }
 
     if (directionsHash[y + 1]) {
       directionsHash[y + 1] = filterDirections([x, x - 1, x + 1], directionsHash[y + 1]);
-      battlefieldMatrix[y + 1][x] = null;
-      if (battlefieldMatrix[y + 1][x + 1] !== undefined) {
-        battlefieldMatrix[y + 1][x + 1] = null;
-      };
-      if (battlefieldMatrix[y + 1][x - 1] !== undefined) {
-        battlefieldMatrix[y + 1][x - 1] = null;
-      }
     }
 
-    return { x: [x], y: [y], dir };
+    return { x, y, dir: null };
   } else {
     let isArranged = false;
+    let tryAttempt = 0;
     while (!isArranged) {
+      if (tryAttempt > 1000000) {
+        throw new Error("Не удалось расположить корабли");
+      }
+
       const y = directions[Math.floor(Math.random() * directions.length)];
       const xDirections = directionsHash[y];
       const x = xDirections[Math.floor(Math.random() * xDirections.length)];
@@ -110,39 +85,34 @@ function randomlyArrangeShip(shipSize) {
       isArranged = isFieldsAvailable(x, y, shipSize, "right");
 
       if (isArranged) {
-        directionsHash[y][x] = filterDirections(generatePositionsArray(x, "right", shipSize), directionsHash[y][x]);
-        let curDir = directionsHash[y][x-1] !== undefined ? x - 1 : x; 
-        shipSize = directionsHash[y][x - 1] !== undefined ? x + 2 : x + 1
-        for (let i = 0; i < shipSize; i++) {
-          battlefieldMatrix[y][curDir] = (curDir === (x - 1) || curDir === (x + shipSize)) ? null : false;
-
-          if (battlefieldMatrix[y - 1] !== undefined) {
-            battlefieldMatrix[y - 1][curDir] = null;
-          };
-
-          if (battlefieldMatrix[y + 1] !== undefined) {
-            battlefieldMatrix[y + 1][curDir] = null;
-          }
-          curDir++;
-        };
-
-        break;
-      };
+        const end = horizontalyArrangeShipToMatrix(y, x, "right", shipSize);
+        return { x: [x, end], y, dir: "horizontal" };
+      }
 
       isArranged = isFieldsAvailable(x, y, shipSize, "left");
 
       if (isArranged) {
-        directionsHash[y][x] = filterDirections(generatePositionsArray(x, "left", shipSize), directionsHash[y][x]);
-        let curDir = x + 1;
-        for (let i = 0; i < shipSize + 2; i++) {
-          battlefieldMatrix[y][curDir]
-        }
+        const end = horizontalyArrangeShipToMatrix(y, x, "left", shipSize);
+        return { x: [x, end], y, dir: "horizontal" };
       }
+
+      isArranged = isFieldsAvailable(x, y, shipSize, "up");
+
+      if (isArranged) {
+        const end = verticallyArrangeShipToMatrix(y, x, shipSize, "up");
+        return { x, y: [y, end], dir: "vertical" };
+      }
+
+      isArranged = isFieldsAvailable(x, y, shipSize, "down");
+
+      if (isArranged) {
+        const end = verticallyArrangeShipToMatrix(y, x, shipSize, "down");
+        return { x, y: [y, end], dir: "vertical" };
+      }
+
+      tryAttempt++;
     }
   }
-
-  return res;
-
 }
 
 function drawBattlefields() {
@@ -232,28 +202,99 @@ function drawBattlefields() {
 }
 
 function arrangeShips() {
+  const lastChild = myField.children[myField.children.length - 1];
   for (let i = 0; i < 4; i++) {
-    const ship = document.createElement("div");
-    ship.role = "button";
-    ship.innerHTML = firstTierShip();
+    // const ship = document.createElement("div");
+    // ship.role = "button";
+    // ship.innerHTML = firstTierShip();
+    // ship.style.height = "fit-content";
     const { x, y } = randomlyArrangeShip(1);
-    ship.style.gridRow = y[0] + 2;
-    ship.style.gridColumn = x[0] + 2;
-    myField.appendChild(ship);
+    // ship.style.gridRow = y + 2;
+    // ship.style.gridColumn = x + 2;
+    // ship.style.justifySelf = "center";
+    // myField.appendChild(ship);
+    // myField.adj
+    lastChild.insertAdjacentHTML("afterend", firstTierShip(x + 2, y + 2));
   }
 
-  // const ship3 = document.createElement("div");
-  // ship3.role = "button";
-  // ship3.innerHTML = thirdTierShip();
-  // const { x, y, dir } = randomlyArrangeShip(3);
+  for (let i = 0; i < 3; i++) {
+    // const ship = document.createElement("div");
+    // ship.role = "button";
+    // ship.innerHTML = secondTierShip();
+    // ship.style.justifySelf = "center";
+    const { x, y, dir } = randomlyArrangeShip(2);
 
-  // if (dir === 1) {
-  //   ship3.style.transform = `rotate(90deg)`;
-  // };
-  // ship3.style.gridRow = y[0] + 2;
-  // ship3.style.gridColumn = `${(x[0] + 2)}/ span ${(x[1] + 2) - (x[0] + 2)}`;
-  // myField.appendChild(ship3);
+    switch (dir) {
+      case "horizontal":
+        const xStart = Math.min(x[0], x[1]);
+        const xEnd = Math.max(x[0], x[1]);
+        lastChild.insertAdjacentHTML(
+          "afterend",
+          secondTierShip(xStart, xEnd, y + 2, "rotate(90deg)", true)
+        );
+        break;
+      case "vertical":
+        const yStart = Math.min(y[0], y[1]);
+        const yEnd = Math.max(y[0], y[1]);
+        lastChild.insertAdjacentHTML(
+          "afterend",
+          secondTierShip(yStart, yEnd, x + 2, "rotate(0deg)", false)
+        );
+        break;
+    }
+  }
 
+  // for (let i = 0; i < 2; i++) {
+  //   const ship = document.createElement("div");
+  //   ship.role = "button";
+  //   ship.innerHTML = thirdTierShip();
+  //   ship.style.justifySelf = "center";
+  //   const { x, y, dir } = randomlyArrangeShip(3);
+
+  //   switch (dir) {
+  //     case "horizontal":
+  //       ship.style.transform = "rotate(90deg)";
+  //       const xStart = Math.min(x[0], x[1]);
+  //       const xEnd = Math.max(x[0], x[1]);
+  //       ship.style.gridRow = y + 2;
+  //       ship.style.gridColumn = `${xStart + 2} / ${xEnd + 2}`;
+  //       break;
+  //     case "vertical":
+  //       ship.style.height = "fit-content";
+  //       const yStart = Math.min(y[0], y[1]);
+  //       const yEnd = Math.max(y[0], y[1]);
+  //       ship.style.gridColumn = x + 2;
+  //       ship.style.gridRow = `${yStart + 2} / ${yEnd + 2}`;
+  //       break;
+  //   }
+
+  //   myField.appendChild(ship);
+  // }
+
+  // const ship = document.createElement("div");
+  // ship.role = "button";
+  // ship.innerHTML = fourthTierShip();
+  // ship.style.justifySelf = "center";
+  // const { x, y, dir } = randomlyArrangeShip(4);
+
+  // switch (dir) {
+  //   case "horizontal":
+  //     ship.style.transform = "rotate(90deg)";
+  //     const xStart = Math.min(x[0], x[1]);
+  //     const xEnd = Math.max(x[0], x[1]);
+  //     ship.style.gridRow = y + 2;
+  //     ship.style.gridColumn = `${xStart + 2} / ${xEnd + 2}`;
+  //     break;
+  //   case "vertical":
+  //     ship.style.height = "fit-content";
+  //     const yStart = Math.min(y[0], y[1]);
+  //     const yEnd = Math.max(y[0], y[1]);
+  //     ship.style.gridColumn = x + 2;
+  //     ship.style.gridRow = `${yStart + 2} / ${yEnd + 2}`;
+  //     break;
+  // }
+
+  // myField.appendChild(ship);
 }
 
 function filterDirections(ship, array) {
@@ -266,58 +307,176 @@ function filterDirections(ship, array) {
   return newArray;
 }
 
+function horizontalyArrangeShipToMatrix(y, x, dir, shipSize) {
+  directionsHash[y] = filterDirections(generatePositionsArray(x, dir, shipSize), directionsHash[y]);
+
+  if (!directionsHash[y].length) {
+    directions = directions.filter((pos) => pos !== y);
+  }
+
+  if (directionsHash[y - 1] !== undefined) {
+    directionsHash[y - 1] = filterDirections(
+      generatePositionsArray(x, dir, shipSize),
+      directionsHash[y - 1]
+    );
+
+    if (!directionsHash[y - 1].length) {
+      directions = directions.filter((pos) => pos !== y - 1);
+    }
+  }
+
+  if (directionsHash[y + 1] !== undefined) {
+    directionsHash[y + 1] = filterDirections(
+      generatePositionsArray(x, dir, shipSize),
+      directionsHash[y + 1]
+    );
+
+    if (!directionsHash[y + 1].length) {
+      directions = directions.filter((pos) => pos !== y + 1);
+    }
+  }
+
+  let curDir = x;
+
+  for (let i = 0; i < shipSize; i++) {
+    battlefieldMatrix[y][curDir] = true;
+    if (dir === "right") {
+      curDir++;
+    } else {
+      curDir--;
+    }
+  }
+
+  return dir === "left" ? curDir + 1 : curDir - 1;
+}
+
+function verticallyArrangeShipToMatrix(y, x, shipSize, dir) {
+  let curDir = y;
+  for (let i = 0; i < shipSize; i++) {
+    directionsHash[curDir] = filterDirections([x, x + 1, x - 1], directionsHash[curDir]);
+    if (!directionsHash[curDir].length) directions = directions.filter((pos) => pos !== curDir);
+    battlefieldMatrix[curDir][x] = true;
+    if (dir === "up") {
+      curDir--;
+    } else {
+      curDir++;
+    }
+  }
+
+  return dir === "up" ? curDir + 1 : curDir - 1;
+}
+
 function generatePositionsArray(x, dir, size) {
   const arr = [];
-  let curPos = x - 1;
+  let curPos = dir === "right" ? x - 1 : x + 1;
   for (let i = 0; i < size + 2; i++) {
     arr.push(curPos);
     if (dir === "right") {
       curPos++;
     } else {
       curPos--;
-    };
-  };
+    }
+  }
 
   return arr;
 }
 
-
 function isFieldsAvailable(x, y, size, dir) {
+  let xDir = x;
+  let yDir = y;
+
+  switch (dir) {
+    case "right":
+      if (battlefieldMatrix[y][x - 1] !== undefined) {
+        xDir = x - 1;
+        size = size + 2;
+      } else {
+        size = size + 1;
+      }
+      break;
+    case "left":
+      if (battlefieldMatrix[y][x + 1] !== undefined) {
+        xDir = x + 1;
+        size = size + 2;
+      } else {
+        size = size + 1;
+      }
+      break;
+    case "up":
+      if (battlefieldMatrix[y + 1] !== undefined) {
+        yDir = y + 1;
+        size = size + 2;
+      } else {
+        size = size + 1;
+      }
+      break;
+    case "down":
+      if (battlefieldMatrix[y - 1] !== undefined) {
+        yDir = y - 1;
+        size = size + 2;
+      } else {
+        size = size + 1;
+      }
+  }
+
   for (let i = 0; i < size; i++) {
     if (dir === "right" || dir === "left") {
-      if (dir === "right") {
-        x++;
+      if (i === size) {
+        if (
+          battlefieldMatrix[yDir][xDir] ||
+          battlefieldMatrix[yDir - 1]?.[xDir] ||
+          battlefieldMatrix[yDir + 1]?.[xDir]
+        ) {
+          return false;
+        }
       } else {
-        x--;
-      };
-      if ((i === (size - 1) && directions[y][x] !== undefined && directions[y][x] === null) ||
-        ((i !== (size - 1) && directions[y][x] === undefined) || directions[y][x] === null) ||
-        (directions[y + 1] !== undefined && directions[y + 1][x] === null) ||
-        (directions[y - 1] !== undefined && directions[y - 1][x] === null)
-      ) {
-        return false;
+        if (
+          battlefieldMatrix[yDir][xDir] === undefined ||
+          battlefieldMatrix[yDir][xDir] ||
+          battlefieldMatrix[yDir + 1]?.[xDir] ||
+          battlefieldMatrix[yDir - 1]?.[xDir]
+        ) {
+          return false;
+        }
+      }
+      if (dir === "right") {
+        xDir++;
+      } else {
+        xDir--;
       }
     } else if (dir === "up" || dir == "down") {
-      if (dir === "up") {
-        y--;
+      if (i === size) {
+        if (
+          battlefieldMatrix[yDir]?.[xDir] ||
+          battlefieldMatrix[yDir]?.[xDir + 1] ||
+          battlefieldMatrix[yDir]?.[xDir - 1]
+        ) {
+          return false;
+        }
       } else {
-        y++;
-      };
-      if ((i === (size - 1) && directions[y][x] !== undefined && directions[y][x] === null) ||
-        ((i !== (size - 1) && directions[y][x] === undefined) || directions[y][x] === null) ||
-        (directions[y][x - 1] !== undefined && directions[y][x - 1] === null) ||
-        (directions[y][x + 1] !== undefined && directions[y][x + 1] === null)
-      ) {
-        return false;
-      };
+        if (
+          battlefieldMatrix[yDir]?.[xDir] === undefined ||
+          battlefieldMatrix[yDir]?.[xDir] ||
+          battlefieldMatrix[yDir]?.[xDir - 1] ||
+          battlefieldMatrix[yDir]?.[xDir + 1]
+        ) {
+          return false;
+        }
+      }
+      if (dir === "up") {
+        yDir--;
+      } else {
+        yDir++;
+      }
     }
   }
+
   return true;
 }
 
 function render() {
   drawBattlefields();
   arrangeShips();
-  console.log(battlefieldMatrix);
-
+  console.log("matrix: ", battlefieldMatrix);
+  console.log("hash: ", directionsHash);
 }
