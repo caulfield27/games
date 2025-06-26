@@ -1,33 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Battleship</title>
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css">
-    <link rel="stylesheet" href="/global.css">
-</head>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css" />
+    <link rel="stylesheet" href="/global.css" />
+    <script src="../../lib/draggibility/draggibility.pkgd.min.js"></script>
+  </head>
 
-<body>
+  <body>
     <back-to-menu></back-to-menu>
-    <i class="fa-solid fa-shuffle"></i>
     <div class="battleship_container">
-        <header class="battleship_header">
-            <h1>Battleship</h1>
-            <div>
-                <h2>Пользователей онлайн: </h2>
-                <span id="active-users"></span>
-            </div>
-        </header>
-        <main id="battleship_main" class="battleship_main">
-        </main>
+      <header class="battleship_header">
+        <h1>Battleship</h1>
+        <div>
+          <h2>Пользователей онлайн:</h2>
+          <span id="active-users"></span>
+        </div>
+      </header>
+      <main id="battleship_main" class="battleship_main"></main>
     </div>
     <script src="scripts/main.js" type="module" defer></script>
     <script src="/components/backToMenuButton/backToMenu.js" defer></script>
-    <script src="/utils/handleDocumentLoading.js" type="module" defer></script>
+    <script src="/utils/handleDocumentLoading.js" type="module"></script>
     <script src="scripts/ships.js" type="module"></script>
-</body>
-
+    <script src="scripts/helpers.js" type="module"></script>
+  </body>
 </html>

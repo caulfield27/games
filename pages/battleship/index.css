@@ -1,27 +1,34 @@
 .battleship_container {
-    width: 100%;
-    height: 100%;
-    padding: 50px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+  display: flex;  
+  flex-direction: column;
+  gap: 24px;
 }
 
 .battleship_main {
-    display: flex;
-    flex-direction: row;
-    gap: 75px;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 75px;
+  justify-content: center;
+  align-items: center;
 }
 
 .battlefield_cell {
-    border-top: 1px solid gainsboro;
-    border-left: 1px solid gainsboro;
+  border-top: 1px solid gainsboro;
+  border-left: 1px solid gainsboro;
 }
 
 .battle_field {
-    display: grid;
-    grid-template-columns: repeat(11, 40px);
-    grid-template-rows: repeat(11, 40px);
+  display: grid;
+  grid-template-columns: repeat(11, 40px);
+  grid-template-rows: repeat(11, 40px);
+
+  border-right: 1px solid gainsboro;
+  border-bottom: 1px solid gainsboro;
+
+  background-image: linear-gradient(to right, gainsboro 1px, transparent 1px),
+    linear-gradient(to bottom, gainsboro 1px, transparent 1px);
+  background-size: 40px 40px;
 }
