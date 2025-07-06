@@ -15,15 +15,28 @@
   align-items: center;
 }
 
+.field_wrapper{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .battlefield_cell {
   border-top: 1px solid gainsboro;
   border-left: 1px solid gainsboro;
 }
 
-.battle_field {
+.parent_field{
   display: grid;
   grid-template-columns: repeat(11, 40px);
-  grid-template-rows: repeat(11, 40px);
+  grid-template-rows: repeat(11,40px);
+}
+
+.battle_field {
+  margin: 40px 0 0 40px;
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
 
   border-right: 1px solid gainsboro;
   border-bottom: 1px solid gainsboro;
@@ -31,4 +44,16 @@
   background-image: linear-gradient(to right, gainsboro 1px, transparent 1px),
     linear-gradient(to bottom, gainsboro 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+.my_position{
+  position: absolute;
+  left: 30%;
+  top: 0;
+}
+
+.opp_position{
+  position: absolute;
+  right: 30%;
+  top: 0;
 }

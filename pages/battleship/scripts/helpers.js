@@ -4,7 +4,7 @@ const arrangeStatus = {
 };
 
 let lastTempElem = null;
-
+let coordinateDif = null;
 
 function filterDirections(ship, array) {
   const newArray = [];
@@ -98,35 +98,35 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
       ship.style.border = "3px solid blue";
       ship.style.cursor = "grab";
       const { x, y } = randomlyArrangeShip(1, directions, directionsHash, battlefieldMatrix);
-      ship.dataset.coordinates = JSON.stringify({x,y,dir: null});
-      ship.style.gridRow = y + 2;
-      ship.style.gridColumn = x + 2;
+      ship.dataset.coordinates = JSON.stringify({ x, y, dir: null });
+      ship.style.gridRow = y + 1;
+      ship.style.gridColumn = x + 1;
       const draggableShip = new Draggabilly(ship, {
         containment: myField,
       });
 
       draggableShip.on("dragMove", (_, pointer) => {
-        if(lastTempElem){
+        if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
         };
 
-        const { x, y } = getCoordinates(myField, pointer);
-        checkPosition(x,y,battlefieldMatrix,null, true, myField);
+        const { xDir, yDir } = getCoordinates(myField, pointer);
+        checkPosition(xDir, yDir, battlefieldMatrix,null, size, myField, ship);
       });
 
       draggableShip.on("dragEnd", (event, _) => {
         cancelAbsoluteDisplay(event.target);
-        if(lastTempElem){
+        if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
         };
 
-        if(arrangeStatus.canArrange && arrangeStatus.coordinates){
-          const {coordinates} = arrangeStatus;
+        // if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
+        //   const { coordinates } = arrangeStatus;
 
-          battlefieldMatrix[coordinates.y][coordinates.x] = true;
-        };
+        //   battlefieldMatrix[coordinates.y][coordinates.x] = true;
+        // };
       });
 
       myField.appendChild(ship);
@@ -145,20 +145,20 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         battlefieldMatrix
       );
 
-      ship.dataset.coordinates = JSON.stringify({x,y,dir});
+      ship.dataset.coordinates = JSON.stringify({ x, y, dir });
 
       switch (dir) {
         case "horizontal":
           const xStart = Math.min(x[0], x[1]);
           const xEnd = Math.max(x[0], x[1]);
-          ship.style.gridRow = y + 2;
-          ship.style.gridColumn = `${xStart + 2} / ${xEnd + 3}`;
+          ship.style.gridRow = y + 1;
+          ship.style.gridColumn = `${xStart + 1} / ${xEnd + 2}`;
           break;
         case "vertical":
           const yStart = Math.min(y[0], y[1]);
           const yEnd = Math.max(y[0], y[1]);
-          ship.style.gridColumn = x + 2;
-          ship.style.gridRow = `${yStart + 2} / ${yEnd + 3}`;
+          ship.style.gridColumn = x + 1;
+          ship.style.gridRow = `${yStart + 1} / ${yEnd + 2}`;
           break;
       }
 
@@ -166,19 +166,73 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         containment: true,
       });
 
-      // draggableShip.on("dragMove", (_, pointer) => {
-      //   const { x, y } = getCoordinates(myField, pointer);
-      //   canArrange(x,y,battlefieldMatrix);
-      // });
+      draggableShip.on("dragMove", (_, pointer) => {
+        const { xDir, yDir } = getCoordinates(myField, pointer);
+        checkPosition(xDir, yDir, battlefieldMatrix, dir, size, myField, ship);
+      });
 
-      // draggableShip.on("dragEnd", () => {
-      //   cancelAbsoluteDisplay();
-      // });
+      draggableShip.on("dragEnd", (event) => {
+        cancelAbsoluteDisplay(event.target);
+      });
 
       myField.appendChild(ship);
     }
   }
 }
+
+function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement) {
+  const prevCoordinates = JSON.parse(shipElement.dataset.coordinates);
+  const prevX = prevCoordinates.x;
+  const prevY = prevCoordinates.y;
+
+  if (size === 1) {
+    if (
+      (!battlefieldMatrix[y][x]) &&
+      (!battlefieldMatrix[y][x + 1] || (x + 1 === prevX && y === prevY)) &&
+      (!battlefieldMatrix[y][x - 1] || (x - 1 === prevX && y === prevY)) &&
+      (!battlefieldMatrix[y - 1]?.[x] || (x === prevX && y - 1 === prevY)) &&
+      (!battlefieldMatrix[y - 1]?.[x - 1] || (x - 1 === prevX && y - 1 === prevY)) &&
+      (!battlefieldMatrix[y - 1]?.[x + 1] || (x + 1 === prevX && y - 1 === prevY)) &&
+      (!battlefieldMatrix[y + 1]?.[x] || (x === prevX && y + 1 === prevY)) &&
+      (!battlefieldMatrix[y + 1]?.[x - 1] || (x - 1 === prevX && y + 1 === prevY)) &&
+      (!battlefieldMatrix[y + 1]?.[x + 1] || (x + 1 === prevX && y + 1 === prevY))
+    ) {
+      lastTempElem = document.createElement("div");
+      lastTempElem.style.border = "3px solid lightgreen";
+      lastTempElem.style.gridRow = y + 1;
+      lastTempElem.style.gridColumn = x + 1;
+
+      myField.appendChild(lastTempElem);
+
+      arrangeStatus.canArrange = true;
+      arrangeStatus.coordinates = { x, y };
+    } else {
+      arrangeStatus.canArrange = false;
+      arrangeStatus.coordinates = null;
+    }
+  } else {
+    const pivot = dir === "horizontal" ? x : y; 
+    if (coordinateDif === null) {
+      coordinateDif = getDiff(dir === "horizontal" ? prevX : prevY, pivot);
+    };
+
+    let start = Math.max(0, pivot - coordinateDif);
+  }
+}
+
+function getDiff(arr, pos) {
+  const [start, end] = [Math.min(...arr), Math.max(...arr)];
+  let counter = 0;
+  for (let i = start; i <= end; i++) {
+    if (i - pos === 0) {
+      break;
+    };
+    counter++;
+  };
+
+  return counter;
+}
+
 
 function generatePositionsArray(x, dir, size) {
   const arr = [];
@@ -392,10 +446,10 @@ function cancelAbsoluteDisplay(target) {
 function getCoordinates(field, pointer) {
   const gridRect = field.getBoundingClientRect();
 
-  const relX = pointer.pageX - gridRect.left;
-  const relY = pointer.pageY - gridRect.top;
+  const relX = (pointer.pageX - gridRect.left);
+  const relY = (pointer.pageY - gridRect.top);
 
-  const cellSize = field.clientWidth / 10;
+  const cellSize = 40;
 
   const col = Math.floor(relX / cellSize);
   const row = Math.floor(relY / cellSize);
@@ -403,36 +457,8 @@ function getCoordinates(field, pointer) {
   const x = Math.max(0, Math.min(9, col));
   const y = Math.max(0, Math.min(9, row));
 
-  return { x, y };
+  return { xDir: x, yDir: y };
 }
 
-function checkPosition(x, y, battlefieldMatrix, dir, isSingle, myField) {
-  if(isSingle){
-    if(
-      !battlefieldMatrix[y][x] &&
-      !battlefieldMatrix[y][x+1] &&
-      !battlefieldMatrix[y][x-1] &&
-      !battlefieldMatrix[y-1]?.[x] &&
-      !battlefieldMatrix[y-1]?.[x-1] &&
-      !battlefieldMatrix[y-1]?.[x+1] &&
-      !battlefieldMatrix[y+1]?.[x] &&
-      !battlefieldMatrix[y+1]?.[x-1] &&
-      !battlefieldMatrix[y+1]?.[x+1]
-    ){
-      lastTempElem = document.createElement("div");
-      lastTempElem.style.border = "3px solid lightgreen";
-      lastTempElem.style.gridRow = y+2;
-      lastTempElem.style.gridColumn = x+2;
-      
-      myField.appendChild(lastTempElem);
-      
-      arrangeStatus.canArrange = true;
-      arrangeStatus.coordinates = {x,y};
-    }else{
-      arrangeStatus.canArrange = false;
-      arrangeStatus.coordinates = null;
-    }
-  }
-}
 
 export { displayShip };

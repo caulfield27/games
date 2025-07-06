@@ -1,5 +1,5 @@
 import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
-import {displayShip} from "../scripts/helpers.js";
+import { displayShip } from "../scripts/helpers.js";
 
 // INIT SCRIPT
 
@@ -7,7 +7,6 @@ handleDocumentLoading(render);
 
 // GLOBAL VARIABLES
 
-const mainContainer = document.getElementById("battleship_main");
 const myField = document.createElement("div");
 const opponentField = document.createElement("div");
 
@@ -40,11 +39,25 @@ const directionsHash = {
 // FUNCTIONS
 
 function drawBattlefields() {
-  myField.classList.add("battle_field");
-  opponentField.classList.add("battle_field");
+  const myParentField = document.createElement("div");
+  const opponentParentField = document.createElement("div");
+  const myWrapper = document.getElementById("my_wrapper");
+  const oppWrapper = document.getElementById("opp_wrapper");
   
-  mainContainer.appendChild(myField);
-  mainContainer.appendChild(opponentField);
+  myParentField.classList.add("parent_field");
+  myParentField.classList.add("my_position");
+  opponentParentField.classList.add("parent_field");
+  opponentParentField.classList.add("opp_position")
+  myField.classList.add("battle_field");
+  myField.classList.add("my_position")
+  opponentField.classList.add("battle_field");
+  opponentField.classList.add("opp_position");
+
+
+  myWrapper.appendChild(myParentField)
+  myWrapper.appendChild(myField);
+  oppWrapper.appendChild(opponentParentField)
+  oppWrapper.appendChild(opponentField);
 
   let pos = 2;
 
@@ -75,18 +88,18 @@ function drawBattlefields() {
     oppsNumSpan.style.justifySelf = "center";
     oppsNumSpan.style.alignSelf = "center";
 
-    myField.appendChild(myLetterSpan);
-    myField.appendChild(myNumSpan);
+    myParentField.appendChild(myLetterSpan);
+    myParentField.appendChild(myNumSpan);
 
-    opponentField.appendChild(oppsLetterSpan);
-    opponentField.appendChild(oppsNumSpan);
+    opponentParentField.appendChild(oppsLetterSpan);
+    opponentParentField.appendChild(oppsNumSpan);
 
     pos++;
   });
 }
 
 function arrangeShips() {
-  for(let i = 1; i < 5; i++){
+  for (let i = 1; i < 5; i++) {
     displayShip(i, myField, directions, directionsHash, battlefieldMatrix);
   };
 }
@@ -96,5 +109,5 @@ function render() {
   drawBattlefields();
   arrangeShips();
   console.log('matrix: ', battlefieldMatrix);
-  
+
 }
