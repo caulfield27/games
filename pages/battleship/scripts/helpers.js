@@ -1,10 +1,11 @@
 const arrangeStatus = {
   canArrange: false,
-  coordinates: null
+  coordinates: null,
 };
 
 let lastTempElem = null;
 let coordinateDif = null;
+let prevPositionSet = null;
 
 function filterDirections(ship, array) {
   const newArray = [];
@@ -109,10 +110,10 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
-        };
+        }
 
         const { xDir, yDir } = getCoordinates(myField, pointer);
-        checkPosition(xDir, yDir, battlefieldMatrix,null, size, myField, ship);
+        checkPosition(xDir, yDir, battlefieldMatrix, null, size, myField, ship);
       });
 
       draggableShip.on("dragEnd", (event, _) => {
@@ -120,7 +121,7 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
-        };
+        }
 
         // if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
         //   const { coordinates } = arrangeStatus;
@@ -166,12 +167,37 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         containment: true,
       });
 
+      draggableShip.on("dragStart", () => {
+        const { coordinates } = ship.dataset;
+        const parsedCoordinates = JSON.parse(coordinates);
+
+        const array = Array.isArray(parsedCoordinates.x)
+          ? parsedCoordinates.x
+          : parsedCoordinates.y;
+        const set = new Set();
+        const [start, end] = [Math.min(...array), Math.max(...array)];
+        for (let i = start; i <= end; i++) {
+          set.add(i);
+        }
+        prevPositionSet = set;
+      });
+
       draggableShip.on("dragMove", (_, pointer) => {
+        if (lastTempElem) {
+          myField.removeChild(lastTempElem);
+          lastTempElem = null;
+        }
+
         const { xDir, yDir } = getCoordinates(myField, pointer);
         checkPosition(xDir, yDir, battlefieldMatrix, dir, size, myField, ship);
       });
 
       draggableShip.on("dragEnd", (event) => {
+        if (lastTempElem) {
+          myField.removeChild(lastTempElem);
+          lastTempElem = null;
+        }
+
         cancelAbsoluteDisplay(event.target);
       });
 
@@ -187,7 +213,7 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
 
   if (size === 1) {
     if (
-      (!battlefieldMatrix[y][x]) &&
+      !battlefieldMatrix[y][x] &&
       (!battlefieldMatrix[y][x + 1] || (x + 1 === prevX && y === prevY)) &&
       (!battlefieldMatrix[y][x - 1] || (x - 1 === prevX && y === prevY)) &&
       (!battlefieldMatrix[y - 1]?.[x] || (x === prevX && y - 1 === prevY)) &&
@@ -211,12 +237,89 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
       arrangeStatus.coordinates = null;
     }
   } else {
-    const pivot = dir === "horizontal" ? x : y; 
+    let isAvailable = true;
+    const pivot = dir === "horizontal" ? x : y;
     if (coordinateDif === null) {
       coordinateDif = getDiff(dir === "horizontal" ? prevX : prevY, pivot);
-    };
+    }
 
-    let start = Math.max(0, pivot - coordinateDif);
+    const start = Math.max(0, pivot - coordinateDif);
+    let dynamicStart = start;
+    let dynamicSize = size;
+
+    if (dir === "horizontal") {
+      if (battlefieldMatrix[y][start + size] !== undefined) {
+        dynamicSize++;
+      }
+
+      if (battlefieldMatrix[y][start - 1] !== undefined) {
+        dynamicStart--;
+        dynamicSize++;
+      }
+    } else {
+      if (battlefieldMatrix[start + size] !== undefined) {
+        dynamicSize++;
+      }
+
+      if (battlefieldMatrix[start - 1] !== undefined) {
+        dynamicStart--;
+        dynamicSize++;
+      }
+    }
+
+    const staticPrevDir = Array.isArray(prevX) ? prevY : prevX;
+
+    for (let i = 0; i < dynamicSize; i++) {
+      if (dir === "horizontal") {
+        if (
+          battlefieldMatrix[y][dynamicStart] !== false ||
+          (battlefieldMatrix[y - 1] !== undefined &&
+            battlefieldMatrix[y - 1][dynamicStart] &&
+            !(staticPrevDir === y - 1 && prevPositionSet?.has(dynamicStart)
+          )) ||
+          (battlefieldMatrix[y + 1] !== undefined &&
+            battlefieldMatrix[y + 1][dynamicStart] &&
+            !(staticPrevDir === y + 1 && prevPositionSet?.has(dynamicStart)))
+        ) {
+          isAvailable = false;
+        }
+      } else {
+        if (
+          battlefieldMatrix[dynamicStart]?.[x] !== false ||
+          (battlefieldMatrix[dynamicStart]?.[x - 1] && !(x-1 === staticPrevDir && prevPositionSet?.includes(dynamicStart))) ||
+          (battlefieldMatrix[dynamicStart]?.[x + 1] && !(x+1 === staticPrevDir && prevPositionSet?.includes(dynamicStart)))
+        ) {
+          isAvailable = false;
+        }
+      }
+      dynamicStart++;
+    }
+
+    if (isAvailable) {
+      lastTempElem = document.createElement("div");
+      lastTempElem.style.border = "3px solid lightgreen";
+
+      switch (dir) {
+        case "horizontal":
+          lastTempElem.style.gridRow = y + 1;
+          lastTempElem.style.gridColumn = `${start + 1} / ${start + size + 1}`;
+          break;
+        case "vertical":
+          lastTempElem.style.gridColumn = x + 1;
+          lastTempElem.style.gridRow = `${start + 1} / ${start + size + 1}`;
+          break;
+      }
+
+      myField.appendChild(lastTempElem);
+
+      arrangeStatus.canArrange = true;
+      x = dir === "horizontal" ? [start, start + size - 1] : x;
+      y = dir === "vertical" ? [start, start + size - 1] : y;
+      arrangeStatus.coordinates = { x, y };
+    } else {
+      arrangeStatus.canArrange = false;
+      arrangeStatus.coordinates = null;
+    }
   }
 }
 
@@ -226,13 +329,12 @@ function getDiff(arr, pos) {
   for (let i = start; i <= end; i++) {
     if (i - pos === 0) {
       break;
-    };
+    }
     counter++;
-  };
+  }
 
   return counter;
 }
-
 
 function generatePositionsArray(x, dir, size) {
   const arr = [];
@@ -446,8 +548,8 @@ function cancelAbsoluteDisplay(target) {
 function getCoordinates(field, pointer) {
   const gridRect = field.getBoundingClientRect();
 
-  const relX = (pointer.pageX - gridRect.left);
-  const relY = (pointer.pageY - gridRect.top);
+  const relX = pointer.pageX - gridRect.left;
+  const relY = pointer.pageY - gridRect.top;
 
   const cellSize = 40;
 
@@ -459,6 +561,5 @@ function getCoordinates(field, pointer) {
 
   return { xDir: x, yDir: y };
 }
-
 
 export { displayShip };
