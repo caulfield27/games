@@ -108,6 +108,4 @@ function arrangeShips() {
 function render() {
   drawBattlefields();
   arrangeShips();
-  console.log('matrix: ', battlefieldMatrix);
-
 }

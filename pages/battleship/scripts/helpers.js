@@ -118,16 +118,26 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
 
       draggableShip.on("dragEnd", (event, _) => {
         cancelAbsoluteDisplay(event.target);
+        prevPositionSet = null;
+        coordinateDif = null;
         if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
         }
 
-        // if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
-        //   const { coordinates } = arrangeStatus;
+        if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
+          const { coordinates } = arrangeStatus;
+          const prevCoordinates = JSON.parse(ship.dataset?.coordinates ?? null);
 
-        //   battlefieldMatrix[coordinates.y][coordinates.x] = true;
-        // };
+          battlefieldMatrix[prevCoordinates.y][prevCoordinates.x] = false;
+          battlefieldMatrix[coordinates.y][coordinates.x] = true;
+          ship.style.gridRow = coordinates.y + 1;
+          ship.style.gridColumn = coordinates.x + 1;
+
+          ship.dataset.coordinates = JSON.stringify(coordinates);
+        }
+        arrangeStatus.canArrange = false;
+        arrangeStatus.coordinates = null;
       });
 
       myField.appendChild(ship);
@@ -174,12 +184,11 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         const array = Array.isArray(parsedCoordinates.x)
           ? parsedCoordinates.x
           : parsedCoordinates.y;
-        const set = new Set();
+        prevPositionSet = new Set();
         const [start, end] = [Math.min(...array), Math.max(...array)];
         for (let i = start; i <= end; i++) {
-          set.add(i);
+          prevPositionSet.add(i);
         }
-        prevPositionSet = set;
       });
 
       draggableShip.on("dragMove", (_, pointer) => {
@@ -193,12 +202,47 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
       });
 
       draggableShip.on("dragEnd", (event) => {
+        prevPositionSet = null;
+        coordinateDif = null;
         if (lastTempElem) {
           myField.removeChild(lastTempElem);
           lastTempElem = null;
         }
 
         cancelAbsoluteDisplay(event.target);
+
+        if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
+          const prevCoordinates = JSON.parse(ship.dataset?.coordinates ?? null);
+          const { coordinates } = arrangeStatus;
+
+          const isVertical = Array.isArray(prevCoordinates.y);
+          const prevArray = isVertical ? prevCoordinates.y : prevCoordinates.x;
+          const prevStart = Math.min(...prevArray);
+          const prevEnd = Math.max(...prevArray);
+
+          for (let i = prevStart; i <= prevEnd; i++) {
+            battlefieldMatrix[isVertical ? i : prevCoordinates.y][
+              isVertical ? prevCoordinates.x : i
+            ] = false;
+          }
+
+          const curArray = isVertical ? coordinates.y : coordinates.x;
+          const start = Math.min(...curArray);
+          const end = Math.max(...curArray);
+
+          for (let i = start; i <= end; i++) {
+            battlefieldMatrix[isVertical ? i : coordinates.y][
+              isVertical ? coordinates.x : i
+            ] = true;
+          }
+
+          ship.style.gridRow = isVertical ? `${start + 1} / ${end + 2}` : coordinates.y + 1;
+          ship.style.gridColumn = isVertical ? coordinates.x + 1 : `${start + 1} / ${end + 2}`;
+
+          ship.dataset.coordinates = JSON.stringify(coordinates);
+        }
+        arrangeStatus.canArrange = false;
+        arrangeStatus.coordinates = null;
       });
 
       myField.appendChild(ship);
@@ -275,8 +319,7 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
           battlefieldMatrix[y][dynamicStart] !== false ||
           (battlefieldMatrix[y - 1] !== undefined &&
             battlefieldMatrix[y - 1][dynamicStart] &&
-            !(staticPrevDir === y - 1 && prevPositionSet?.has(dynamicStart)
-          )) ||
+            !(staticPrevDir === y - 1 && prevPositionSet?.has(dynamicStart))) ||
           (battlefieldMatrix[y + 1] !== undefined &&
             battlefieldMatrix[y + 1][dynamicStart] &&
             !(staticPrevDir === y + 1 && prevPositionSet?.has(dynamicStart)))
@@ -286,8 +329,10 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
       } else {
         if (
           battlefieldMatrix[dynamicStart]?.[x] !== false ||
-          (battlefieldMatrix[dynamicStart]?.[x - 1] && !(x-1 === staticPrevDir && prevPositionSet?.includes(dynamicStart))) ||
-          (battlefieldMatrix[dynamicStart]?.[x + 1] && !(x+1 === staticPrevDir && prevPositionSet?.includes(dynamicStart)))
+          (battlefieldMatrix[dynamicStart]?.[x - 1] &&
+            !(x - 1 === staticPrevDir && prevPositionSet?.has(dynamicStart))) ||
+          (battlefieldMatrix[dynamicStart]?.[x + 1] &&
+            !(x + 1 === staticPrevDir && prevPositionSet?.has(dynamicStart)))
         ) {
           isAvailable = false;
         }
