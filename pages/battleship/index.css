@@ -1,8 +1,9 @@
 @font-face {
     font-family: "Tektur";
-    src: url(/fonts/newAmsterdam/NewAmsterdam-Regular.woff2) format('woff2');
+    src: url(/fonts/taktur/Tektur-Regular.woff2) format('woff2');
     font-weight: normal;
-    font-style: normal
+    font-style: normal;
+    font-display: swap;
 }
 
 body,
@@ -89,4 +90,30 @@ html {
   position: absolute;
   right: 10%;
   top: 0;
+}
+
+.play_btn{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  border: 1px solid #0000b9;
+  background: #0000ff;
+  outline: none;
+  padding: 10px;
+  font-size: 18px;
+  color: white;
+  border-radius: 8px;
+  min-width: 150px;
+  cursor: pointer;
+  transition: background 0.3s linear;
+}
+
+.play_btn:hover{
+  background: #0000b9;
+}
+
+.play_btn_loading{
+  opacity: 0.6;
+  pointer-events: none;
 }

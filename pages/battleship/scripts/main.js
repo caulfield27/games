@@ -1,5 +1,6 @@
 import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
 import { displayShip } from "../scripts/helpers.js";
+import { gameSessionData, startGame } from "./socket.js";
 
 // INIT SCRIPT
 
@@ -10,7 +11,7 @@ handleDocumentLoading(render);
 const myField = document.createElement("div");
 const opponentField = document.createElement("div");
 
-const battlefieldMatrix = [
+gameSessionData.myFiledMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
   [false, false, false, false, false, false, false, false, false, false],
   [false, false, false, false, false, false, false, false, false, false],
@@ -43,20 +44,19 @@ function drawBattlefields() {
   const opponentParentField = document.createElement("div");
   const myWrapper = document.getElementById("my_wrapper");
   const oppWrapper = document.getElementById("opp_wrapper");
-  
+
   myParentField.classList.add("parent_field");
   myParentField.classList.add("my_position");
   opponentParentField.classList.add("parent_field");
-  opponentParentField.classList.add("opp_position")
+  opponentParentField.classList.add("opp_position");
   myField.classList.add("battle_field");
-  myField.classList.add("my_position")
+  myField.classList.add("my_position");
   opponentField.classList.add("battle_field");
   opponentField.classList.add("opp_position");
 
-
-  myWrapper.appendChild(myParentField)
+  myWrapper.appendChild(myParentField);
   myWrapper.appendChild(myField);
-  oppWrapper.appendChild(opponentParentField)
+  oppWrapper.appendChild(opponentParentField);
   oppWrapper.appendChild(opponentField);
 
   let pos = 2;
@@ -100,10 +100,33 @@ function drawBattlefields() {
 
 function arrangeShips() {
   for (let i = 1; i < 5; i++) {
-    displayShip(i, myField, directions, directionsHash, battlefieldMatrix);
-  };
+    displayShip(i, myField, directions, directionsHash, gameSessionData.myFiledMatrix);
+  }
 }
 
+export function reset() {
+  gameSessionData = {
+    myName: "",
+    opponentName: "",
+    myFiledMatrix: [
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+      [false, false, false, false, false, false, false, false, false, false],
+    ],
+    sessionId: null,
+  };
+  const play = document.getElementById("play");
+  play.textContent = "Играть";
+  play.onclick = startGame;
+  arrangeShips();
+}
 
 function render() {
   drawBattlefields();
