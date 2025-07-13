@@ -6,6 +6,7 @@ const arrangeStatus = {
 let lastTempElem = null;
 let coordinateDif = null;
 let prevPositionSet = null;
+let target = null;
 
 function filterDirections(ship, array) {
   const newArray = [];
@@ -96,7 +97,7 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
   if (size === 1) {
     for (let i = 0; i < 4; i++) {
       const ship = document.createElement("div");
-      ship.style.border = "3px solid blue";
+      ship.style.border = "2px solid blue";
       ship.style.cursor = "grab";
       const { x, y } = randomlyArrangeShip(1, directions, directionsHash, battlefieldMatrix);
       ship.dataset.coordinates = JSON.stringify({ x, y, dir: null });
@@ -105,6 +106,10 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
       const draggableShip = new Draggabilly(ship, {
         containment: myField,
       });
+
+      draggableShip.on("dragStart", (event) => {
+        target = event.target;
+      })
 
       draggableShip.on("dragMove", (_, pointer) => {
         if (lastTempElem) {
@@ -116,8 +121,8 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         checkPosition(xDir, yDir, battlefieldMatrix, null, size, myField, ship);
       });
 
-      draggableShip.on("dragEnd", (event, _) => {
-        cancelAbsoluteDisplay(event.target);
+      draggableShip.on("dragEnd", () => {
+        cancelAbsoluteDisplay(target);
         prevPositionSet = null;
         coordinateDif = null;
         if (lastTempElem) {
@@ -148,7 +153,7 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
     for (let i = 0; i < amount; i++) {
       const ship = document.createElement("div");
       ship.style.cursor = "grab";
-      ship.style.border = "3px solid blue";
+      ship.style.border = "2px solid blue";
       const { x, y, dir } = randomlyArrangeShip(
         size,
         directions,
@@ -177,7 +182,8 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         containment: true,
       });
 
-      draggableShip.on("dragStart", () => {
+      draggableShip.on("dragStart", (event, _) => {
+        target = event.target;
         const { coordinates } = ship.dataset;
         const parsedCoordinates = JSON.parse(coordinates);
 
@@ -209,7 +215,7 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
           lastTempElem = null;
         }
 
-        cancelAbsoluteDisplay(event.target);
+        cancelAbsoluteDisplay(target);
 
         if (arrangeStatus.canArrange && arrangeStatus.coordinates) {
           const prevCoordinates = JSON.parse(ship.dataset?.coordinates ?? null);
@@ -268,7 +274,7 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
       (!battlefieldMatrix[y + 1]?.[x + 1] || (x + 1 === prevX && y + 1 === prevY))
     ) {
       lastTempElem = document.createElement("div");
-      lastTempElem.style.border = "3px solid lightgreen";
+      lastTempElem.style.border = "2px solid lightgreen";
       lastTempElem.style.gridRow = y + 1;
       lastTempElem.style.gridColumn = x + 1;
 
@@ -342,7 +348,7 @@ function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement)
 
     if (isAvailable) {
       lastTempElem = document.createElement("div");
-      lastTempElem.style.border = "3px solid lightgreen";
+      lastTempElem.style.border = "2px solid lightgreen";
 
       switch (dir) {
         case "horizontal":
@@ -585,9 +591,11 @@ function randomlyArrangeShip(shipSize, directions, directionsHash, battlefieldMa
 }
 
 function cancelAbsoluteDisplay(target) {
-  target.style.transform = "";
-  target.style.left = "";
-  target.style.top = "";
+  if (target) {
+    target.style.transform = "";
+    target.style.left = "";
+    target.style.top = "";
+  }
 }
 
 function getCoordinates(field, pointer) {
@@ -596,7 +604,7 @@ function getCoordinates(field, pointer) {
   const relX = pointer.pageX - gridRect.left;
   const relY = pointer.pageY - gridRect.top;
 
-  const cellSize = 40;
+  const cellSize = 30;
 
   const col = Math.floor(relX / cellSize);
   const row = Math.floor(relY / cellSize);
