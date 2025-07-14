@@ -1,37 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Battleship</title>
-    <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css" />
-    <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
-    <link rel="stylesheet" href="/global.css" />
-    <script src="../../lib/draggibility/draggibility.pkgd.min.js"></script>
-  </head>
 
-  <body>
-    <back-to-menu></back-to-menu>
-    <div class="battleship_container">
-      <header class="battleship_header">
-        <h1>Морской бой</h1>
-        <div>
-          <span>Игроков онлайн:</span>
-          <span id="active-users"></span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battleship</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css" />
+  <link rel="stylesheet" href="/global.css" />
+  <link rel="stylesheet" href="/lib/sweetalert2.min.css">
+  <script src="../../lib/draggibility/draggibility.pkgd.min.js"></script>
+</head>
+
+<body>
+  <back-to-menu></back-to-menu>
+  <div class="battleship_container">
+    <header class="battleship_header">
+      <h1>Морской бой</h1>
+      <div>
+        <span>Игроков онлайн:</span>
+        <span id="active-users"></span>
+      </div>
+    </header>
+    <main id="battleship_main" class="battleship_main">
+      <div class="battle_field" id="battlefield">
+        <div class="letters_grid">
+          <span>А</span><span>Б</span><span>В</span><span>Г</span><span>Д</span><span>Е</span><span>Ж</span><span>З</span><span>И</span><span>К</span>
         </div>
-      </header>
-      <main id="battleship_main" class="battleship_main">
-        <div id="my_wrapper" class="field_wrapper"></div>
-        <button class="play_btn" id="play">Играть</button>
-        <div id="opp_wrapper" class="field_wrapper"></div>
-      </main>
-    </div>
-    <script src="scripts/main.js" type="module" defer></script>
-    <script src="/components/backToMenuButton/backToMenu.js" defer></script>
-    <script src="/utils/handleDocumentLoading.js" type="module"></script>
-    <script src="scripts/helpers.js" type="module"></script>
-    <script src="scripts/socket.js" type="module" defer></script>
-    <script src="/lib/sweetalert2.min.js"></script>
-  </body>
+        <div class="numbers_grid">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+        </div>
+      </div>
+      <div class="actions_wrapper">
+        <div id="switcher" class="switcher">
+          <div class="switch-control"></div>
+          <button>Cлучайный противник</button>
+          <button>Играть с другом</button>
+        </div>
+        <button id="find-game-btn" class="find_game_btn">Найти противника</button>
+        <div id="invite-block" class="invite_friend_wrapper" style="display: none;">
+          <span>Чтобы пригласить друга, отправьте ему эту ссылку</span>
+          <div>
+            <span class="link" id="link"></span>
+            <button id="copy-btn">
+              <img src="/assets/copy.svg" alt="">
+            </button>
+          </div>
+          <span>С вами сыграет первый, кто перейдёт по этой ссылке.</span>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="scripts/main.js" type="module" defer></script>
+  <script src="/components/backToMenuButton/backToMenu.js" defer></script>
+  <script src="/utils/handleDocumentLoading.js" type="module"></script>
+  <script src="scripts/helpers.js" type="module"></script>
+  <script src="scripts/socket.js" type="module" defer></script>
+  <script src="/lib/sweetalert2.min.js"></script>
+</body>
+
 </html>

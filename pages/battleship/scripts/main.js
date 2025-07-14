@@ -1,6 +1,6 @@
 import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
 import { displayShip } from "../scripts/helpers.js";
-import { gameSessionData, startGame } from "./socket.js";
+import {nanoid} from "../../../node_modules/nanoid/nanoid.js";
 
 // INIT SCRIPT
 
@@ -8,8 +8,7 @@ handleDocumentLoading(render);
 
 // GLOBAL VARIABLES
 
-const myField = document.createElement("div");
-const opponentField = document.createElement("div");
+const myField = document.getElementById("battlefield");
 
 gameSessionData.myFiledMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
@@ -39,63 +38,50 @@ const directionsHash = {
 
 // FUNCTIONS
 
-function drawBattlefields() {
-  const myParentField = document.createElement("div");
-  const opponentParentField = document.createElement("div");
-  const myWrapper = document.getElementById("my_wrapper");
-  const oppWrapper = document.getElementById("opp_wrapper");
+const switcher = document.getElementById("switcher");
+const buttons = switcher.querySelectorAll("button");
+const inviteBlock = document.getElementById("invite-block");
+const findGameBtn = document.getElementById("find-game-btn");
+const link = document.getElementById("link");
 
-  myParentField.classList.add("parent_field");
-  myParentField.classList.add("my_position");
-  opponentParentField.classList.add("parent_field");
-  opponentParentField.classList.add("opp_position");
-  myField.classList.add("battle_field");
-  myField.classList.add("my_position");
-  opponentField.classList.add("battle_field");
-  opponentField.classList.add("opp_position");
+buttons.forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    let isRight = switcher.classList.contains("right");
+    if((isRight && idx === 1) || (!isRight && idx == 0)) return;
 
-  myWrapper.appendChild(myParentField);
-  myWrapper.appendChild(myField);
-  oppWrapper.appendChild(opponentParentField);
-  oppWrapper.appendChild(opponentField);
-
-  let pos = 2;
-
-  ["А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К"].forEach((elem, ind) => {
-    const myLetterSpan = document.createElement("span");
-    const myNumSpan = document.createElement("span");
-    const oppsLetterSpan = document.createElement("span");
-    const oppsNumSpan = document.createElement("span");
-
-    myLetterSpan.textContent = elem;
-    myNumSpan.textContent = ind + 1;
-    oppsLetterSpan.textContent = elem;
-    oppsNumSpan.textContent = ind + 1;
-
-    myLetterSpan.style.gridArea = `1/${pos}`;
-    myLetterSpan.style.justifySelf = "center";
-    myLetterSpan.style.alignSelf = "center";
-
-    myNumSpan.style.gridArea = `${pos}/1`;
-    myNumSpan.style.justifySelf = "center";
-    myNumSpan.style.alignSelf = "center";
-
-    oppsLetterSpan.style.gridArea = `1/${pos}`;
-    oppsLetterSpan.style.justifySelf = "center";
-    oppsLetterSpan.style.alignSelf = "center";
-
-    oppsNumSpan.style.gridArea = `${pos}/1`;
-    oppsNumSpan.style.justifySelf = "center";
-    oppsNumSpan.style.alignSelf = "center";
-
-    myParentField.appendChild(myLetterSpan);
-    myParentField.appendChild(myNumSpan);
-
-    opponentParentField.appendChild(oppsLetterSpan);
-    opponentParentField.appendChild(oppsNumSpan);
-
-    pos++;
+    switcher.classList.toggle('right', idx === 1);
+    isRight = switcher.classList.contains("right");
+    if(isRight){
+      findGameBtn.style.display = "none";
+      inviteBlock.style.display = "flex";
+      link.textContent = `${window.location.href}?room=${nanoid()}`;
+    }else{
+      inviteBlock.style.display = "none";
+      findGameBtn.style.display = ""
+    }
   });
+});
+
+document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
+
+function handleCopyLink(){
+  if(link.textContent){
+    navigator.clipboard.writeText(link.textContent)
+    .then(()=> Swal.fire({
+      position: "top-end",
+      icon: "success",
+      text: "Ссылка успешно скопирована!",
+      showConfirmButton: false,
+      timer: 1000
+    }))
+    .catch(()=> Swal.fire({
+      position: "top-end",
+      icon: "error",
+      text: "Не удалось скопировать ссылку.",
+      showConfirmButton: false,
+      timer: 1000
+    }))
+  }
 }
 
 function arrangeShips() {
@@ -129,6 +115,5 @@ export function reset() {
 }
 
 function render() {
-  drawBattlefields();
   arrangeShips();
 }
