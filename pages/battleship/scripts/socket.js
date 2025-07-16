@@ -5,7 +5,7 @@ import { myField, originalMatrix, reset } from "./main.js";
 
 // GLOBAL VARIABLES
 
-const socket = new WebSocket("ws://localhost:3000");
+const socket = new WebSocket("wss://games-online-service.onrender.com");
 
 export const gameSessionData = {
   myName: "",

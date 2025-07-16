@@ -1,5 +1,5 @@
 import { pages } from "./constants/pages.js";
-import { handleDocumentLoading } from "./utils/handleDocumentLoading.js"
+import { handleDocumentLoading } from "./utils/utils.js"
 
 // GLOBAL VARIABLES
 const container = document.getElementById("main_page_container");
