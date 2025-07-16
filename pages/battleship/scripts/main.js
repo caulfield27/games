@@ -1,6 +1,6 @@
 import { handleDocumentLoading } from "../../../utils/utils.js";
 import { displayShip, ships } from "../scripts/helpers.js";
-import { nanoid } from "nanoid";
+import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
 import { elementsArray, gameSessionData, checkQuery, sendInvite } from "./socket.js";
 
 // INIT SCRIPT
