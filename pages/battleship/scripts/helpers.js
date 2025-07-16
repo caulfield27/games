@@ -7,13 +7,14 @@ let lastTempElem = null;
 let coordinateDif = null;
 let prevPositionSet = null;
 let target = null;
+export const ships = [];
 
 function filterDirections(ship, array) {
   const newArray = [];
   for (let i = 0; i < array.length; i++) {
     if (ship.includes(array[i])) continue;
     newArray.push(array[i]);
-  }
+  };
 
   return newArray;
 }
@@ -107,9 +108,9 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         containment: myField,
       });
 
-      draggableShip.on("dragStart", (event) => {
-        target = event.target;
-      })
+      draggableShip.on("dragStart", () => {
+        target = ship;
+      });
 
       draggableShip.on("dragMove", (_, pointer) => {
         if (lastTempElem) {
@@ -145,6 +146,10 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         arrangeStatus.coordinates = null;
       });
 
+      ships.push({
+        ship,
+        draggableShip
+      });
       myField.appendChild(ship);
     }
   } else {
@@ -182,8 +187,8 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         containment: true,
       });
 
-      draggableShip.on("dragStart", (event, _) => {
-        target = event.target;
+      draggableShip.on("dragStart", () => {
+        target = ship;
         const { coordinates } = ship.dataset;
         const parsedCoordinates = JSON.parse(coordinates);
 
@@ -251,6 +256,10 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
         arrangeStatus.coordinates = null;
       });
 
+      ships.push({
+        ship,
+        draggableShip
+      });
       myField.appendChild(ship);
     }
   }
@@ -259,7 +268,7 @@ function displayShip(size, myField, directions, directionsHash, battlefieldMatri
 function checkPosition(x, y, battlefieldMatrix, dir, size, myField, shipElement) {
   const prevCoordinates = JSON.parse(shipElement.dataset.coordinates);
   const prevX = prevCoordinates.x;
-  const prevY = prevCoordinates.y;
+  const prevY = prevCoordinates.y; 
 
   if (size === 1) {
     if (
@@ -495,6 +504,10 @@ function isFieldsAvailable(x, y, size, dir, battlefieldMatrix) {
   return true;
 }
 
+export function isLose(matrix){
+  return matrix.every((arr)=> arr.every((elem) => !elem));
+};
+
 function randomlyArrangeShip(shipSize, directions, directionsHash, battlefieldMatrix) {
   if (shipSize === 1) {
     const y = directions[Math.floor(Math.random() * directions.length)];
@@ -598,9 +611,9 @@ function cancelAbsoluteDisplay(target) {
   }
 }
 
-function getCoordinates(field, pointer) {
+export function getCoordinates(field, pointer) {
   const gridRect = field.getBoundingClientRect();
-
+  
   const relX = pointer.pageX - gridRect.left;
   const relY = pointer.pageY - gridRect.top;
 

@@ -1,5 +1,5 @@
 import { images } from "./constants.js";
-import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
+import { handleDocumentLoading } from "../../../utils/utils.js";
 
 // SETTINGS
 

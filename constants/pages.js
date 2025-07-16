@@ -1,18 +1,18 @@
 export const pages = [
     {
-        name: "Mainsweeper",
+        name: "Сапёр",
         icon: "./assets/minesweeper_preview.avif",
         href: "./pages/minesweeper/index.html",
         tags: ["2D","Puzzle","Singleplayer"]
     },
     {
-        name: "Memory game",
+        name: "Найди пару",
         icon: "./assets/memory.avif",
         href: "./pages/memoryGame/index.html",
         tags: ["2D","Memory","Singleplayer"]
     },
     {
-        name: "Battleship",
+        name: "Морской бой",
         icon: "./assets/battleship_preview.avif",
         href: "./pages/battleship/index.html",
         tags: ["2D","Strategy","Multiplayer","Board Game"]

@@ -1,6 +1,7 @@
-import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
-import { displayShip } from "../scripts/helpers.js";
-import {nanoid} from "../../../node_modules/nanoid/nanoid.js";
+import { handleDocumentLoading } from "../../../utils/utils.js";
+import { displayShip, ships } from "../scripts/helpers.js";
+import { nanoid } from "../../../node_modules/nanoid/nanoid.js";
+import { elementsArray, gameSessionData, checkQuery, sendInvite } from "./socket.js";
 
 // INIT SCRIPT
 
@@ -8,7 +9,14 @@ handleDocumentLoading(render);
 
 // GLOBAL VARIABLES
 
-const myField = document.getElementById("battlefield");
+export const myField = document.getElementById("battlefield");
+export let originalMatrix = [];
+const infoSection = document.getElementById("info-section");
+const actions = document.getElementById("actions");
+const main = document.getElementById("battleship_main");
+const instruction = document.getElementById("instructions");
+const play = document.getElementById("find-game-btn");
+const quit = document.getElementById("quit-btn");
 
 gameSessionData.myFiledMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
@@ -23,7 +31,7 @@ gameSessionData.myFiledMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
 ];
 let directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-const directionsHash = {
+let directionsHash = {
   0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -43,44 +51,55 @@ const buttons = switcher.querySelectorAll("button");
 const inviteBlock = document.getElementById("invite-block");
 const findGameBtn = document.getElementById("find-game-btn");
 const link = document.getElementById("link");
+let inviteLink = null;
 
 buttons.forEach((btn, idx) => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener("click", () => {
     let isRight = switcher.classList.contains("right");
-    if((isRight && idx === 1) || (!isRight && idx == 0)) return;
+    if ((isRight && idx === 1) || (!isRight && idx == 0)) return;
 
-    switcher.classList.toggle('right', idx === 1);
+    switcher.classList.toggle("right", idx === 1);
     isRight = switcher.classList.contains("right");
-    if(isRight){
+    if (isRight) {
       findGameBtn.style.display = "none";
       inviteBlock.style.display = "flex";
-      link.textContent = `${window.location.href}?room=${nanoid()}`;
-    }else{
+      if (!inviteLink) {
+        const key = nanoid();
+        inviteLink = `${window.location.href}?room=${key}`;
+        link.textContent = inviteLink;
+        sendInvite(key);
+      }
+    } else {
       inviteBlock.style.display = "none";
-      findGameBtn.style.display = ""
+      findGameBtn.style.display = "";
     }
   });
 });
 
 document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
 
-function handleCopyLink(){
-  if(link.textContent){
-    navigator.clipboard.writeText(link.textContent)
-    .then(()=> Swal.fire({
-      position: "top-end",
-      icon: "success",
-      text: "Ссылка успешно скопирована!",
-      showConfirmButton: false,
-      timer: 1000
-    }))
-    .catch(()=> Swal.fire({
-      position: "top-end",
-      icon: "error",
-      text: "Не удалось скопировать ссылку.",
-      showConfirmButton: false,
-      timer: 1000
-    }))
+function handleCopyLink() {
+  if (link.textContent) {
+    navigator.clipboard
+      .writeText(link.textContent)
+      .then(() =>
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          text: "Ссылка успешно скопирована!",
+          showConfirmButton: false,
+          timer: 1000,
+        })
+      )
+      .catch(() =>
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          text: "Не удалось скопировать ссылку.",
+          showConfirmButton: false,
+          timer: 1000,
+        })
+      );
   }
 }
 
@@ -91,29 +110,66 @@ function arrangeShips() {
 }
 
 export function reset() {
-  gameSessionData = {
-    myName: "",
-    opponentName: "",
-    myFiledMatrix: [
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false, false, false, false],
-    ],
-    sessionId: null,
+  main.style.justifyContent = "flex-start";
+  main.style.gap = "80px";
+  if (gameSessionData.opponentField) {
+    main.removeChild(gameSessionData.opponentField);
+  }
+
+  infoSection.style.display = "none";
+  actions.style.display = "flex";
+  play.textContent = "Найти противника";
+  play.classList.remove("play_btn_loading");
+  instruction.textContent = "Расположите корабли";
+  quit.style.display = "none";
+
+  gameSessionData.myName = "";
+  gameSessionData.opponentField = null;
+  gameSessionData.opponentName = "";
+  gameSessionData.myFiledMatrix = [
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+  ];
+  gameSessionData.sessionId = null;
+
+  while (ships.length) {
+    const { ship } = ships.pop();
+    myField.removeChild(ship);
+  }
+
+  while (elementsArray.length) {
+    myField.removeChild(elementsArray.pop());
+  }
+
+  directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  directionsHash = {
+    0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    3: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    4: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    7: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    9: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   };
-  const play = document.getElementById("play");
-  play.textContent = "Играть";
-  play.onclick = startGame;
+
   arrangeShips();
+  originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
 }
+
 
 function render() {
   arrangeShips();
+  checkQuery();
+  originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
 }

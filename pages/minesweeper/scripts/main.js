@@ -1,7 +1,7 @@
 import { dropdownOptions, getFields, levels } from "./data.js";
 import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
 import { killSmile, smileIsAlive } from "./drawSVG.js";
-import { handleDocumentLoading } from "../../../utils/handleDocumentLoading.js";
+import { handleDocumentLoading } from "../../../utils/utils.js";
 
 handleDocumentLoading(render);
 

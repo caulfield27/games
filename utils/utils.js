@@ -1,4 +1,4 @@
-export function handleDocumentLoading(onLoad) {
+function handleDocumentLoading(onLoad) {
   const loader = document.createElement("my-loader");
   document.body.appendChild(loader);
   document.body.style.overflow = "hidden";
@@ -8,3 +8,11 @@ export function handleDocumentLoading(onLoad) {
     onLoad();
   });
 }
+
+function removeQueryParams(key){
+    const url = new URL(window.location.href);
+    url.searchParams.delete(key);
+    history.replaceState(null,"",url);
+}
+
+export {handleDocumentLoading, removeQueryParams}
