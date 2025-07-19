@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Сапёр</title>
-    <link rel="stylesheet" href="index.css" />
-    <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
-    <link rel="stylesheet" href="/components/dropdown/dropdown.css" />
-    <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css">
-    <link rel="stylesheet" href="/global.css">
-  </head>
-  <body>
-    <back-to-menu></back-to-menu>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сапёр</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
+  <link rel="stylesheet" href="/components/dropdown/dropdown.css" />
+  <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css">
+  <link rel="stylesheet" href="/global.css">
+</head>
+
+<body>
+  <back-to-menu></back-to-menu>
+  <div class="pages_container">
     <div class="mainsweeper_wrapper">
       <div class="my_dropdown_wrapper">
-        <my-dropdown
-          id="my_dropdown"
-          initialValue="medium"
-        ></my-dropdown>
+        <my-dropdown id="my_dropdown" initialValue="medium"></my-dropdown>
       </div>
       <div class="game_board" id="board">
         <div class="tablo">
@@ -50,14 +50,16 @@
         <div id="container"></div>
       </div>
     </div>
+  </div>
 
-    <script src="scripts/main.js" type="module"></script>
-    <script src="scripts/data.js" type="module"></script>
-    <script src="scripts/digits.js" type="module"></script>
-    <script src="scripts/drawSVG.js" type="module"></script>
-    <script src="/lib/sweetalert2.min.js"></script>
-    <script src="/components/dropdown/dropdown.js" defer></script>
-    <script src="/components/backToMenuButton/backToMenu.js" defer></script>
-    <script src="/utils/utils.js" type="module"></script>
-  </body>
+  <script src="scripts/main.js" type="module"></script>
+  <script src="scripts/data.js" type="module"></script>
+  <script src="scripts/digits.js" type="module"></script>
+  <script src="scripts/drawSVG.js" type="module"></script>
+  <script src="/lib/sweetalert2.min.js"></script>
+  <script src="/components/dropdown/dropdown.js" defer></script>
+  <script src="/components/backToMenuButton/backToMenu.js" defer></script>
+  <script src="/utils/utils.js" type="module"></script>
+</body>
+
 </html>

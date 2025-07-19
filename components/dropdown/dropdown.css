@@ -16,6 +16,7 @@
 
 .my_dropdown_ul{
     position: absolute;
+    z-index: 99;
     top: 28px;
     left: 0;
     list-style-type: none;

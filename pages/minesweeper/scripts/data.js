@@ -1,30 +1,32 @@
+const isMobile = window.innerWidth <= 480;
+
 export const levels = {
   easy: {
     label: "Лёгкий",
     rows: 10,
     cols: 8,
     mines: 10,
-    size: "45px",
-    mineSize: "35px",
-    flagSize: "35px",
+    size: !isMobile ? "45px" : "34.6px",
+    mineSize: !isMobile ? "35px" : "25px",
+    flagSize: !isMobile ? "35px" : "25px",
   },
   medium: {
     label: "Средний",
-    rows: 18,
-    cols: 14,
+    rows: !isMobile ? 18 : 12,
+    cols: !isMobile ? 14 : 21,
     mines: 40,
-    size: "35px",
-    mineSize: "30px",
-    flagSize: "25px",
+    size: !isMobile ? "35px" : "28.8px",
+    mineSize: !isMobile ? "30px" : "20px",
+    flagSize: !isMobile ? "35px" : "20px",
   },
   hard: {
     label: "Сложный",
-    rows: 24,
-    cols: 20,
+    rows: !isMobile ? 24 : 16,
+    cols: !isMobile ? 20 : 30,
     mines: 99,
-    size: "25px",
-    mineSize: "25px",
-    flagSize: "20px",
+    size: !isMobile ? "25px" : "21.5px",
+    mineSize: !isMobile ? "30px" : "15px",
+    flagSize: !isMobile ? "35px" : "15px",
   },
 };
 
@@ -74,16 +76,16 @@ export function getFields(level) {
     const edgeCase = leftEdge.has(i)
       ? 1
       : rightEdge.has(i)
-      ? 2
-      : bottomLeft
-      ? 3
-      : bottomRight
-      ? 4
-      : topLeft
-      ? 5
-      : topRight
-      ? 6
-      : 7;
+        ? 2
+        : bottomLeft
+          ? 3
+          : bottomRight
+            ? 4
+            : topLeft
+              ? 5
+              : topRight
+                ? 6
+                : 7;
     return {
       id: i + 1,
       isMine: false,
