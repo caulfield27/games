@@ -10,13 +10,13 @@ handleDocumentLoading(render);
 // GLOBAL VARIABLES
 
 export const myField = document.getElementById("battlefield");
-export let originalMatrix = [];
 const infoSection = document.getElementById("info-section");
 const actions = document.getElementById("actions");
 const main = document.getElementById("battleship_main");
 const instruction = document.getElementById("instructions");
 const play = document.getElementById("find-game-btn");
 const quit = document.getElementById("quit-btn");
+const shuffleBtn = document.getElementById("shuffle-btn");
 
 gameSessionData.myFiledMatrix = [
   [false, false, false, false, false, false, false, false, false, false],
@@ -43,6 +43,10 @@ let directionsHash = {
   8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   9: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 };
+
+// STRAIGHT LISTENERS  
+shuffleBtn.addEventListener("click",reset)
+document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
 
 // FUNCTIONS
 
@@ -76,7 +80,6 @@ buttons.forEach((btn, idx) => {
   });
 });
 
-document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
 
 function handleCopyLink() {
   if (link.textContent) {
@@ -122,6 +125,7 @@ export function reset() {
   play.classList.remove("play_btn_loading");
   instruction.textContent = "Расположите корабли";
   quit.style.display = "none";
+  shuffleBtn.style.display = "flex";
 
   gameSessionData.myName = "";
   gameSessionData.opponentField = null;
@@ -164,12 +168,10 @@ export function reset() {
   };
 
   arrangeShips();
-  originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
 }
 
 
 function render() {
   arrangeShips();
   checkQuery();
-  originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
 }

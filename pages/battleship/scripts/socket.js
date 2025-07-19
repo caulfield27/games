@@ -1,7 +1,7 @@
 import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
 import { removeQueryParams } from "../../../utils/utils.js";
 import { getCoordinates, isLose, ships } from "./helpers.js";
-import { myField, originalMatrix, reset } from "./main.js";
+import { myField, reset } from "./main.js";
 
 // GLOBAL VARIABLES
 
@@ -23,6 +23,7 @@ const main = document.getElementById("battleship_main");
 const instruction = document.getElementById("instructions");
 const quit = document.getElementById("quit-btn");
 const buttonsMatrx = [];
+let originalMatrix = [];
 export const elementsArray = [];
 
 // HELPER FUNCTIONS
@@ -34,7 +35,7 @@ async function startGame() {
     confirmButtonText: "Продолжить",
   });
 
-  if (result?.value) {
+  if (result?.value && socket.readyState === socket.OPEN) {
     play.classList.add("play_btn_loading");
     play.textContent = "Подбор противника...";
     gameSessionData.myName =
@@ -121,15 +122,23 @@ function generateOpponentField(name) {
   gameSessionData.opponentField = field;
 }
 
-function getRange(x, y, arr) {
+function getRange(x, y, arr, matrix) {
+  if (!arr[y][x - 1] && !arr[y][x + 1] && !arr[y - 1]?.[x] && !arr[y + 1]?.[x]) {
+    return {
+      range: null,
+      isVertical: false,
+      isDestroyed: true
+    }
+  }
+
   const isVertical = arr[y + 1]?.[x] || arr[y - 1]?.[x];
   let start = isVertical ? y : x;
   let end = isVertical ? y : x;
 
   if (isVertical) {
-    while (arr[start][x] || arr[end][x]) {
-      if (arr[start][x]) start--;
-      if (arr[end][x]) end++;
+    while (arr[start]?.[x] || arr[end]?.[x]) {
+      if (arr[start]?.[x]) start--;
+      if (arr[end]?.[x]) end++;
     }
   } else {
     while (arr[y][start] || arr[y][end]) {
@@ -138,47 +147,74 @@ function getRange(x, y, arr) {
     }
   }
 
+  let isDestroyed = true;
+  for (let i = start + 1; i < end; i++) {
+    if (isVertical) {
+      if (matrix[i]?.[x]) {
+        isDestroyed = false;
+      }
+    } else {
+      if (matrix[y]?.[i]) {
+        isDestroyed = false;
+      }
+    }
+  }
+
   return {
     range: [start, end],
     isVertical,
+    isDestroyed
   };
 }
 
-function disableAround(x, y, start, end, isVertical) {
-  for (let i = start; i <= end; i++) {
-    if (isVertical) {
-      const btnLeft = buttonsMatrx[i][x + 1];
-      const btnRight = buttonsMatrx[i][x - 1];
-      if (i === start || i === end) {
-        const btn = buttonsMatrx[i][x];
-        if (btn) {
-          btn.classList.add("miss_field");
+function disableAround(x, y, start, end, isVertical, isSingle) {
+  if (isSingle) {
+    [
+      buttonsMatrx[y][x + 1], buttonsMatrx[y][x - 1],
+      buttonsMatrx[y - 1]?.[x], buttonsMatrx[y - 1]?.[x - 1],
+      buttonsMatrx[y - 1]?.[x + 1], buttonsMatrx[y + 1]?.[x],
+      buttonsMatrx[y + 1]?.[x - 1], buttonsMatrx[y + 1]?.[x + 1],
+    ].forEach((btn) => {
+      if (btn) {
+        btn.classList.add("miss_field");
+      }
+    });
+  } else {
+    for (let i = start; i <= end; i++) {
+      if (isVertical) {
+        const btnLeft = buttonsMatrx[i]?.[x + 1];
+        const btnRight = buttonsMatrx[i]?.[x - 1];
+        if (i === start || i === end) {
+          const btn = buttonsMatrx[i]?.[x];
+          if (btn) {
+            btn.classList.add("miss_field");
+          }
         }
-      }
 
-      if (btnLeft) {
-        btnLeft.classList.add("miss_field");
-      }
-
-      if (btnRight) {
-        btnRight.classList.add("miss_field");
-      }
-    } else {
-      const btnLeft = buttonsMatrx[y - 1]?.[i];
-      const btnRight = buttonsMatrx[y + 1]?.[i];
-      if (i === start || i === end) {
-        const btn = buttonsMatrx[y][i];
-        if (btn) {
-          btn.classList.add("miss_field");
+        if (btnLeft) {
+          btnLeft.classList.add("miss_field");
         }
-      }
 
-      if (btnLeft) {
-        btnLeft.classList.add("miss_field");
-      }
+        if (btnRight) {
+          btnRight.classList.add("miss_field");
+        }
+      } else {
+        const btnLeft = buttonsMatrx[y - 1]?.[i];
+        const btnRight = buttonsMatrx[y + 1]?.[i];
+        if (i === start || i === end) {
+          const btn = buttonsMatrx[y]?.[i];
+          if (btn) {
+            btn.classList.add("miss_field");
+          }
+        }
 
-      if (btnRight) {
-        btnRight.classList.add("miss_field");
+        if (btnLeft) {
+          btnLeft.classList.add("miss_field");
+        }
+
+        if (btnRight) {
+          btnRight.classList.add("miss_field");
+        }
       }
     }
   }
@@ -200,7 +236,7 @@ export function checkQuery() {
         );
         clearInterval(interval);
       }
-    }, 1000);
+    }, 500);
   }
 }
 
@@ -245,6 +281,7 @@ socket.addEventListener("message", (ev) => {
       nameSpan.textContent = gameSessionData.myName;
 
       actions.style.display = "none";
+      document.getElementById("shuffle-btn").style.display = "none";
 
       main.style.justifyContent = "space-between";
       main.style.gap = "";
@@ -280,6 +317,7 @@ socket.addEventListener("message", (ev) => {
         draggableShip.disable();
       });
 
+      originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
       generateOpponentField(name);
 
       Swal.fire({
@@ -335,16 +373,15 @@ socket.addEventListener("message", (ev) => {
         span.classList.add("hitted_field");
         if (isLose(myFiledMatrix)) {
           message.data["status"] = "lose";
-        } else if (
-          myFiledMatrix[y][x + 1] ||
-          myFiledMatrix[y][x - 1] ||
-          myFiledMatrix[y - 1]?.[x] ||
-          myFiledMatrix[y + 1]?.[x]
-        ) {
-          message.data["status"] = "hit";
         } else {
-          message.data["status"] = "destroy";
-          message.data["range"] = getRange(x, y, originalMatrix);
+          const { range, isVertical, isDestroyed } = getRange(x, y, originalMatrix, myFiledMatrix)
+
+          if (isDestroyed) {
+            message.data["status"] = "destroy";
+            message.data["range"] = { range, isVertical };
+          } else {
+            message.data["status"] = "hit";
+          }
         }
       } else {
         span.classList.add("miss_field");
@@ -370,20 +407,14 @@ socket.addEventListener("message", (ev) => {
           title: "Поздравляем, вы выиграли битву!",
           text: "Вы смогли уничтожить весь флот противника",
         }).then(() => reset());
-      } else if (status === "hit") {
-        [
-          buttonsMatrx[yDir - 1]?.[xDir - 1],
-          buttonsMatrx[yDir - 1]?.[xDir + 1],
-          buttonsMatrx[yDir + 1]?.[xDir - 1],
-          buttonsMatrx[yDir + 1]?.[xDir + 1],
-        ].forEach((btn) => {
-          if (btn) {
-            btn.classList.add("miss_field");
-          }
-        });
+
       } else if (status === "destroy") {
         const { range, isVertical } = data.range;
-        disableAround(xDir, yDir, range[0], range[1], isVertical);
+        if (!range) {
+          disableAround(xDir, yDir, null, null, isVertical, true);
+        } else {
+          disableAround(xDir, yDir, range[0], range[1], isVertical, false);
+        }
       }
       break;
     case "lose":
