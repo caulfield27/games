@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #game-container {
+        display: grid;
+        gap: 2px;
+        justify-content: center;
+        align-content: center;
+        width: 95vw;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .cell {
+        aspect-ratio: 1 / 1;
+        background-color: #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2vw;
+        user-select: none;
+        border: 1px solid #999;
+    }
+</style>
+
+<body>
+    <div id="game-container"></div>
+    <script>
+        const levels = {
+            easy: { label: "Лёгкий", rows: 10, cols: 8 },
+            medium: { label: "Средний", rows: 14, cols: 18 },
+            hard: { label: "Сложный", rows: 20, cols: 24 },
+        };
+
+        function renderGrid(level) {
+            const container = document.getElementById("game-container");
+            container.innerHTML = "";
+
+            // Задаем CSS-сетку по количеству колонок
+            container.style.gridTemplateColumns = `repeat(${level.cols}, 1fr)`;
+
+            for (let i = 0; i < level.rows * level.cols; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = ""; // можно добавить номер/иконку/минку
+                container.appendChild(cell);
+            }
+        }
+
+        // Выбираем нужный уровень
+        renderGrid(levels.medium);
+    </script>
+</body>
+
+</html>

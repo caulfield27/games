@@ -18,6 +18,7 @@ body {
 
 .mainsweeper_container {
   display: grid;
+  height: auto;
   border-radius: 2px;
   position: relative;
   border-right: 10px solid #fff;
@@ -59,20 +60,40 @@ body {
   padding: 8px;
 }
 
+.field_small{
+  font-size: 2vw;
+  border-top: 4px solid #fff;
+  border-left: 4px solid #fff;
+  border-bottom: 4px solid #878787;
+  border-right: 4px solid #878787;
+}
+
+.field_medium{
+  font-size: 1vw;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #878787;
+  border-right: 2px solid #878787;
+}
+
+.field_hard{
+  font-size: 0.8vw;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #878787;
+  border-right: 1px solid #878787;
+}
+
+
 .field {
-  border: none;
+  aspect-ratio: 1/1;
   outline: none;
-  font-size: 26px;
   font-weight: 600;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   background: #bfbfbf;
-  border-top: 4px solid #fff;
-  border-left: 4px solid #fff;
-  border-bottom: 4px solid #878787;
-  border-right: 4px solid #878787;
 }
 
 .field:active {

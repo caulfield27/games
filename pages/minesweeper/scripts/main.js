@@ -44,8 +44,9 @@ function render() {
   setField(fields);
   displayDigits(level.mines);
   setTimer();
-  container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
-  container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
+  // container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
+  // container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
+  container.style.gridTemplateColumns = `repeat(${level.rows}, 1fr)`;
 }
 
 function generateMines(firstInd) {
@@ -204,7 +205,8 @@ function generateFields(filedsAmount) {
   // CREATE BUTTONS FOR GAME
   let html = "";
   for (let i = 0; i < filedsAmount; i++) {
-    html += `<button class="field" value="${i}"></button>`;
+    const { label } = level;
+    html += `<button class="field ${label === "Лёгкий" ? "field_small" : label === "Средний" ? "field_medium" : "field_hard"}" value="${i}"></button>`;
   }
 
   return html;
