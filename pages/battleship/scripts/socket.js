@@ -2,7 +2,6 @@ import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.
 import { removeQueryParams } from "../../../utils/utils.js";
 import { getCoordinates, isLose, ships } from "./helpers.js";
 import { myField, reset } from "./main.js";
-import Swal from "sweetalert2";
 
 // GLOBAL VARIABLES
 

@@ -1,6 +1,5 @@
 import { images } from "./constants.js";
 import { handleDocumentLoading } from "../../../utils/utils.js";
-import Swal from "sweetalert2";
 
 // SETTINGS
 
