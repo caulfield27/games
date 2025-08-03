@@ -1,4 +1,4 @@
-const isMobile = window.innerWidth <= 480;
+const width = window.innerWidth;
 
 export const levels = {
   easy: {
@@ -6,33 +6,30 @@ export const levels = {
     rows: 10,
     cols: 8,
     mines: 10,
-    // size: !isMobile ? "45px" : "34.6px",
-    mineSize: !isMobile ? "20px" : "10px",
-    flagSize: !isMobile ? "20px" : "10px",
+    size: width <= 480 ? "25px" : "45px",
+    mineSize: width <= 480 ? "20px" : "35px",
+    flagSize: width <= 480 ? "15px" : "35px",
   },
   medium: {
     label: "Средний",
-    // rows: !isMobile ? 18 : 12,
-    // cols: !isMobile ? 14 : 21,
-    rows: 18,
+    rows: width <= 480 ? 14 : 18,
     cols: 14,
     mines: 40,
-    // size: !isMobile ? "35px" : "28.8px",
-    mineSize: !isMobile ? "10px" : "8px",
-    flagSize: !isMobile ? "10px" : "8px",
+    size: width <= 480 && width > 400 ? "25px" : width <= 400 ? "20px" : "35px",
+    mineSize: width <= 480 ? "15px" : "30px",
+    flagSize: width <= 480 ? "15px" : "25px",
   },
   hard: {
     label: "Сложный",
-    // rows: !isMobile ? 24 : 16,
-    // cols: !isMobile ? 20 : 30,
-    rows: 24,
+    rows: width <= 480 ? 16 : 24,
     cols: 20,
     mines: 99,
-    // size: !isMobile ? "25px" : "21.5px",
-    mineSize: !isMobile ? "10px" : "5px",
-    flagSize: !isMobile ? "10px" : "5px",
+    size: width <= 480 && width > 385 ? "20px" : width < 385 ? "17px" : "25px",
+    mineSize: width <= 480 ? "10px" : "25px",
+    flagSize: width <= 480 ? "12px" : "20px",
   },
 };
+
 
 export const dropdownOptions = [
   {

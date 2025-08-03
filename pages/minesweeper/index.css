@@ -18,6 +18,8 @@ body {
 
 .mainsweeper_container {
   display: grid;
+  grid-template-columns: repeat(var(--rows), var(--size));
+  grid-template-rows: repeat(var(--cols), var(--size));
   height: auto;
   border-radius: 2px;
   position: relative;
@@ -30,6 +32,7 @@ body {
 .game_board {
   grid-column: 2/3;
   justify-self: center;
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -69,19 +72,19 @@ body {
 }
 
 .field_medium{
+  font-size: 1.5vw;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #878787;
+  border-right: 3px solid #878787;
+}
+
+.field_hard{
   font-size: 1vw;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom: 2px solid #878787;
   border-right: 2px solid #878787;
-}
-
-.field_hard{
-  font-size: 0.8vw;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-bottom: 1px solid #878787;
-  border-right: 1px solid #878787;
 }
 
 
@@ -240,6 +243,8 @@ body {
     border-bottom: 3px solid #fff;
     border-left: 3px solid #878787;
     border-top: 3px solid #878787;
+    /* grid-template-columns: repeat(var(--rows), 1fr);
+    grid-template-rows: repeat(var(--cols), 1fr); */
   }
 
   .game_board {
@@ -316,11 +321,72 @@ body {
   }
 
   .field {
-    font-size: 20px;
+    font-size: 16px;
     border-top: 2px solid #fff;
     border-left: 2px solid #fff;
     border-bottom: 2px solid #878787;
     border-right: 2px solid #878787;
   }
 
+}
+
+@media screen and (max-width: 380px) {
+  .digit {
+    width: 15px;
+    height: 35px;
+  }
+
+  .smile_container svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .seg-a {
+    top: 4px;
+    left: 2px;
+    width: 13px;
+    height: 3px;
+  }
+
+  .seg-b {
+    top: 9px;
+    right: -2px;
+    width: 4px;
+    height: 7px;
+  }
+
+  .seg-c {
+    bottom: 9px;
+    right: -2px;
+    width: 4px;
+    height: 7px;
+  }
+
+  .seg-d {
+    bottom: 4px;
+    left: 2px;
+    width: 13px;
+    height: 3px;
+  }
+
+  .seg-e {
+    bottom: 9px;
+    left: 0;
+    width: 4px;
+    height: 7px;
+  }
+
+  .seg-f {
+    top: 9px;
+    left: 0;
+    width: 4px;
+    height: 7px;
+  }
+
+  .seg-g {
+    top: 15px;
+    left: 5px;
+    width: 7px;
+    height: 4px;
+  }
 }

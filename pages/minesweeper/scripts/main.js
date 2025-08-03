@@ -44,9 +44,13 @@ function render() {
   setField(fields);
   displayDigits(level.mines);
   setTimer();
-  // container.style.gridTemplateRows = `repeat(${level.cols}, ${level.size})`;
-  // container.style.gridTemplateColumns = `repeat(${level.rows}, ${level.size})`;
-  container.style.gridTemplateColumns = `repeat(${level.rows}, 1fr)`;
+  defineVariables();
+}
+
+function defineVariables(){
+  container.style.setProperty("--cols", level.cols);
+  container.style.setProperty("--rows", level.rows);
+  container.style.setProperty("--size", level.size);
 }
 
 function generateMines(firstInd) {

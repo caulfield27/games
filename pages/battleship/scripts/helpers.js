@@ -613,9 +613,9 @@ function cancelAbsoluteDisplay(target) {
 
 export function getCoordinates(field, pointer) {
   const gridRect = field.getBoundingClientRect();
-  
-  const relX = pointer.pageX - gridRect.left;
-  const relY = pointer.pageY - gridRect.top;
+
+  const relX = pointer.clientX - gridRect.left;
+  const relY = pointer.clientY - gridRect.top;
 
   const cellSize = 30;
 

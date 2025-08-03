@@ -21,7 +21,6 @@ button {
 }
 
 #app_container {
-  padding: 30px 0 0 0;
   margin: auto;
 }
 
@@ -86,15 +85,21 @@ button {
 .front,
 .back {
   position: absolute;
-  top: 13px;
-  left: 10px;
   backface-visibility: hidden;
   width: 80px;
   height: 60px;
 }
 
+.front{
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
 .back {
   transform: rotateY(180deg);
+  top: 13px;
+  left: 10px;
 }
 
 .active {
@@ -164,4 +169,38 @@ button {
   border-radius: 6px;
   outline: #cb9df0;
   padding: 3px;
+}
+
+
+@media screen and (max-width: 620px) {
+  #cards_container{
+    padding: 16px;
+  }
+
+  .header{
+    display: grid;
+    grid-template-rows: repeat(3,1fr);
+    gap: 16px;
+  }
+
+  .timer_wrapper{
+    grid-area: 2/1;
+  }
+
+  .header div{
+    align-self: center;
+    justify-self: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card{
+    width: 70px;
+    height: 70px;
+  }
+
+  .front, .back{
+    width: 50px;
+    height: 40px;
+  }
 }
