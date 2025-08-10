@@ -1,4 +1,4 @@
-import { nanoid } from "../../../node_modules/nanoid/nanoid.js";
+import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
 import { removeQueryParams } from "../../../utils/utils.js";
 import { getCoordinates, isLose, ships } from "./helpers.js";
 import { myField, reset } from "./main.js";
