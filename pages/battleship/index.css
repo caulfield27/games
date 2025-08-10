@@ -81,7 +81,7 @@ html {
   align-items: center;
   position: absolute;
   left: 0;
-  bottom: -35px;
+  bottom: -45px;
 }
 
 .battle_field {
@@ -170,7 +170,8 @@ html {
   margin: 8px;
 }
 
-.battleship_btn {
+.battleship_btn,
+.ready_btn {
   border: none;
   outline: none;
   background: #7965c1;
@@ -181,9 +182,11 @@ html {
   color: #ffffff;
   transition: 0.3s ease-in-out;
   cursor: pointer;
+  letter-spacing: 1px;
 }
 
-.battleship_btn:hover {
+.battleship_btn:hover,
+.ready_btn:hover {
   background: #362b7d;
 }
 
@@ -317,6 +320,137 @@ html {
   width: 25px;
 }
 
+.chat_container {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: 265px;
+  min-width: 200px;
+  border-top: 1px solid gainsboro;
+  border-left: 1px solid gainsboro;
+  border-bottom: 1px solid gainsboro;
+  border-top-left-radius: 8px;
+  z-index: 99;
+  background: #ae9fe6;
+  font-size: 12px;
+}
+
+.chat_container header {
+  border-bottom: 1px solid #c8c0ff;
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.chat_container header button{
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: transparent;
+  font-size: 24px;
+  padding: 0;
+}
+
+.messages_container {
+  padding: 8px;
+}
+
+.messages_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 179px;
+  overflow-y: scroll;
+}
+
+.msg {
+  padding: 6px;
+  border-radius: 8px;
+  max-width: 150px;
+}
+
+.my_msg {
+  background: #362b7d;
+  align-self: flex-end;
+  color: #fff;
+}
+
+.op_msg {
+  background: gainsboro;
+  align-self: flex-start;
+  color: #000;
+}
+
+.messages_wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.chat_wrapper {
+  height: 100%;
+  position: relative;
+}
+
+.chat_container footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat_container footer input {
+  width: 85%;
+  border: none;
+  padding: 8px;
+}
+
+.chat_container footer input:focus {
+  outline: 1px solid blue;
+}
+
+.chat_container footer button {
+  border: none;
+  outline: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  width: 15%;
+}
+
+.chat_container footer button img {
+  width: 16px;
+}
+
+.chat {
+  cursor: pointer;
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  z-index: 999;
+}
+
+.not {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat_icon {
+  width: 60px;
+}
+
 @media screen and (max-width: 900px) {
   .invite_friend_wrapper {
     max-width: 400px;
@@ -334,16 +468,25 @@ html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 32px;
+    gap: 80px;
   }
 
   .instructions_wrapper {
     justify-content: center;
   }
+
+  .chat_icon {
+    width: 42px;
+  }
+
+  .chat {
+    right: 10px;
+    bottom: 10px;
+  }
 }
 
 @media screen and (max-width: 480px) {
-  .invite_friend_wrapper{
+  .invite_friend_wrapper {
     max-width: 320px;
   }
 }

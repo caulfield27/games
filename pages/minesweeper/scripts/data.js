@@ -25,7 +25,7 @@ export const levels = {
     cols: 20,
     mines: 99,
     size: width <= 480 && width > 385 ? "20px" : width < 385 ? "17px" : "25px",
-    mineSize: width <= 480 ? "10px" : "25px",
+    mineSize: width <= 480 ? "10px" : "20px",
     flagSize: width <= 480 ? "12px" : "20px",
   },
 };

@@ -1,7 +1,7 @@
 import { handleDocumentLoading } from "../../../utils/utils.js";
 import { displayShip, ships } from "../scripts/helpers.js";
-import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
-import { elementsArray, gameSessionData, checkQuery, sendInvite } from "./socket.js";
+import { nanoid } from "../../../node_modules/nanoid/nanoid.js";
+import { elementsArray, gameSessionData, checkQuery, sendInvite, chatBtn, chatContainer, notification } from "./socket.js";
 
 // INIT SCRIPT
 
@@ -45,7 +45,7 @@ let directionsHash = {
 };
 
 // STRAIGHT LISTENERS  
-shuffleBtn.addEventListener("click",reset)
+shuffleBtn.addEventListener("click",arrangeShips)
 document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
 
 // FUNCTIONS
@@ -107,6 +107,42 @@ function handleCopyLink() {
 }
 
 function arrangeShips() {
+  gameSessionData.myFiledMatrix = [
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+  ];
+
+  while (ships.length) {
+    const { ship } = ships.pop();
+    myField.removeChild(ship);
+  };
+
+  while (elementsArray.length) {
+    myField.removeChild(elementsArray.pop());
+  };
+
+  directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  directionsHash = {
+    0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    3: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    4: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    7: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    9: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  };
+
   for (let i = 1; i < 5; i++) {
     displayShip(i, myField, directions, directionsHash, gameSessionData.myFiledMatrix);
   }
@@ -130,42 +166,17 @@ export function reset() {
   gameSessionData.myName = "";
   gameSessionData.opponentField = null;
   gameSessionData.opponentName = "";
-  gameSessionData.myFiledMatrix = [
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-  ];
   gameSessionData.sessionId = null;
 
-  while (ships.length) {
-    const { ship } = ships.pop();
-    myField.removeChild(ship);
-  }
+  chatBtn.classList.add("hidden");
+  chatContainer.classList.add("hidden");
+  notification.classList.add("hidden");
+  notification.textContent = "0";
 
-  while (elementsArray.length) {
-    myField.removeChild(elementsArray.pop());
-  }
-
-  directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  directionsHash = {
-    0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    3: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    4: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    7: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    9: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  };
+  const myReadyWrapper = document.getElementById("ready-wrapper");
+  const opReadyWrapper = document.getElementById("opp-ready-wrapper");
+  opReadyWrapper && opReadyWrapper.remove();
+  myReadyWrapper.style.display = "none";
 
   arrangeShips();
 }

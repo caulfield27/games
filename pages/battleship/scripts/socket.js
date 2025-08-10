@@ -1,4 +1,4 @@
-import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
+import { nanoid } from "../../../node_modules/nanoid/nanoid.js";
 import { removeQueryParams } from "../../../utils/utils.js";
 import { getCoordinates, isLose, ships } from "./helpers.js";
 import { myField, reset } from "./main.js";
@@ -6,9 +6,11 @@ import { myField, reset } from "./main.js";
 // GLOBAL VARIABLES
 
 const socket = new WebSocket("wss://games-online-service.onrender.com");
+let audio = null;
+let pending = false;
 
 export const gameSessionData = {
-  myName: "",
+  myName: "me",
   opponentName: "",
   opponentField: null,
   myFiledMatrix: [],
@@ -25,6 +27,61 @@ const quit = document.getElementById("quit-btn");
 const buttonsMatrx = [];
 let originalMatrix = [];
 export const elementsArray = [];
+const readyWrapper = document.getElementById("ready-wrapper");
+export const chatBtn = document.getElementById("chat");
+export const chatContainer = document.getElementById("chat-container");
+const closeChatBtn = document.getElementById("close-chat");
+const chatInput = document.getElementById("chat-input");
+const sendMsgBtn = document.getElementById("send");
+const messages = document.getElementById("messages");
+export const notification = document.getElementById("not");
+const headerName = document.getElementById("chat-name");
+
+// CHAT
+
+chatBtn.addEventListener("click", ()=>{
+  chatContainer.classList.remove("hidden");
+  chatBtn.classList.add("hidden");
+  notification.textContent = "0";
+  notification.classList.add("hidden");
+});
+
+closeChatBtn.addEventListener("click", ()=>{
+  chatContainer.classList.add("hidden");
+  chatBtn.classList.remove("hidden");
+});
+
+sendMsgBtn.addEventListener("click", handleSendMsg);
+chatInput.addEventListener("focus", ()=>{
+  window.addEventListener("keydown", handleKeyPress);
+});
+chatInput.addEventListener("blur", ()=>{
+  window.removeEventListener("keydown", handleKeyPress);
+});
+
+function handleKeyPress(e){
+  if(e.key !== "Enter") return;
+  handleSendMsg();
+};
+ 
+function handleSendMsg(){
+  const {value} = chatInput;
+  if(!value) return;
+  
+  const newMsg = document.createElement("div");
+  newMsg.classList.add("msg");
+  newMsg.classList.add("my_msg");
+  newMsg.textContent = value;
+  messages.appendChild(newMsg);
+  socket.send(JSON.stringify({type: "message", data: {
+    curRoomId: gameSessionData.sessionId,
+    value
+  }}));
+  messages.scrollTop = messages.scrollHeight
+  chatInput.value = "";
+}; 
+
+
 
 // HELPER FUNCTIONS
 async function startGame() {
@@ -72,9 +129,15 @@ function generateOpponentField(name) {
 
   const infoSection = document.createElement("div");
   const nameSpan = document.createElement("span");
+  const readyWrapper = document.createElement("div");
+  readyWrapper.id = "opp-ready-wrapper";
+  const readyState = document.createElement("span");
+  readyState.textContent = "готовится..."
+  readyWrapper.appendChild(readyState);
   nameSpan.textContent = name;
   infoSection.classList.add("info-section");
   infoSection.appendChild(nameSpan);
+  infoSection.appendChild(readyWrapper);
 
   field.appendChild(lettersGrid);
   field.appendChild(numbersGrid);
@@ -90,8 +153,15 @@ function generateOpponentField(name) {
     btn.style.gridArea = `${row}/${col}`;
     btn.style.position = "relative";
     btn.style.padding = "0";
+    btn.classList.add("disabled_btn")
 
     btn.addEventListener("click", (event) => {
+      if (pending) {
+        return;
+      } else {
+        pending = true;
+      };
+
       const coordinates = getCoordinates(field, event);
       socket.send(
         JSON.stringify({
@@ -277,14 +347,26 @@ socket.addEventListener("message", (ev) => {
       gameSessionData.opponentName = name;
       gameSessionData.sessionId = sessionId;
 
+      headerName.textContent = name;
+      chatBtn.classList.remove("hidden");
+
       infoSection.style.display = "flex";
       nameSpan.textContent = gameSessionData.myName;
 
       actions.style.display = "none";
-      document.getElementById("shuffle-btn").style.display = "none";
 
       main.style.justifyContent = "space-between";
       main.style.gap = "";
+
+      readyWrapper.style.display = "block";
+      const readybtn = document.createElement("button");
+      readybtn.classList.add("ready_btn");
+      readybtn.textContent = "готов"
+      readybtn.onclick = ()=>{
+        socket.send(JSON.stringify({ type: "ready", data: gameSessionData.sessionId }));
+        readyWrapper.innerHTML = "<span>готов<span/>";
+      };
+      readyWrapper.appendChild(readybtn);
 
       quit.style.display = "block";
       quit.addEventListener("click", () => {
@@ -310,15 +392,12 @@ socket.addEventListener("message", (ev) => {
           }
         });
       });
-
-      ships.forEach((elem) => {
-        const { draggableShip, ship } = elem;
-        ship.style.cursor = "default";
-        draggableShip.disable();
-      });
-
-      originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
       generateOpponentField(name);
+
+
+      if(!audio){
+        audio = new Audio("../../../assets/message.wav");
+      };
 
       Swal.fire({
         icon: "success",
@@ -333,11 +412,7 @@ socket.addEventListener("message", (ev) => {
       for (const array of buttonsMatrx) {
         for (const btn of array) {
           if (btn) {
-            if (data === 1) {
-              btn.classList.remove("disabled_btn");
-            } else {
-              btn.classList.add("disabled_btn");
-            }
+            btn.classList.toggle("disabled_btn", data !== 1);
           }
         }
       }
@@ -415,7 +490,8 @@ socket.addEventListener("message", (ev) => {
         } else {
           disableAround(xDir, yDir, range[0], range[1], isVertical, false);
         }
-      }
+      };
+      pending = false;
       break;
     case "lose":
       Swal.fire({
@@ -423,6 +499,42 @@ socket.addEventListener("message", (ev) => {
         title: "К сожалению, вы проиграли битву.",
         text: "Но не проиграли войну!",
       }).then(() => reset());
+      break;
+    case "ready":
+      const readyParent = document.getElementById("opp-ready-wrapper");
+      if (readyParent) {
+        readyParent.innerHTML = "<span>готов</span>"
+      };
+      break;
+    case "gameStart":
+      ships.forEach((elem) => {
+        const { draggableShip, ship } = elem;
+        ship.style.cursor = "default";
+        draggableShip.disable();
+      });
+      document.getElementById("shuffle-btn").style.display = "none";
+      originalMatrix = gameSessionData.myFiledMatrix.map((arr) => [...arr]);
+      const opReadyWrapper = document.getElementById("opp-ready-wrapper");
+      opReadyWrapper.style.display = "none";
+      readyWrapper.style.display = "none";
+      break;
+    case "message":
+      const newMsg = document.createElement("div");
+      newMsg.classList.add("msg");
+      newMsg.classList.add("op_msg");
+      newMsg.textContent = data;
+      messages.appendChild(newMsg);
+      messages.scrollTop = messages.scrollHeight
+      
+      if(audio){
+        audio.play();
+      };
+
+      if(chatContainer.classList.contains("hidden")){
+        const {textContent} = notification;
+        notification.classList.remove("hidden");
+        notification.textContent = (Number(textContent) || 0) + 1;
+      };
   }
 });
 
