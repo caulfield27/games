@@ -1,7 +1,7 @@
 import { dropdownOptions, getFields, levels } from "./data.js";
 import { displayDigits, setTimer, startTimer, updateTablo } from "./digits.js";
 import { killSmile, smileIsAlive } from "./drawSVG.js";
-import { handleDocumentLoading } from "../../../utils/utils.js";
+import { handleDocumentLoading, launchConfetti } from "../../../utils/utils.js";
 
 handleDocumentLoading(render);
 
@@ -280,7 +280,10 @@ function setField() {
       if (isWin(fields, level.mines)) {
         if (intervalCancel) {
           intervalCancel();
-        }
+        };
+
+        launchConfetti();
+
         setTimeout(() => {
           Swal.fire({
             icon: "success",
@@ -292,7 +295,7 @@ function setField() {
               restart();
             }
           });
-        }, [500]);
+        }, [2000]);
       }
     });
   });

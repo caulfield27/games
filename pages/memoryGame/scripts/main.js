@@ -1,5 +1,5 @@
 import { images } from "./constants.js";
-import { handleDocumentLoading } from "../../../utils/utils.js";
+import { handleDocumentLoading, launchConfetti } from "../../../utils/utils.js";
 
 // SETTINGS
 
@@ -42,7 +42,7 @@ const timer = new Timer(
       }
     })
 );
-timer.resetTimer();
+timer.resetTimer(settings?.timer?.minutes ?? 1,settings?.timer?.seconds ?? 0);
 
 function shuffleCards(data) {
   let shuffledArr = [];
@@ -60,20 +60,20 @@ function shuffleCards(data) {
 
 document.getElementById("settings").addEventListener("click", () => {
   Swal.fire({
-    title: "Settings",
+    title: "Настройки",
     html: `
     <div class="settings_container">  
          <div class="setting_wrap">
-            <span>time</span>
+            <span>Время</span>
             <div class="timer_inputs">
-              <label for="min">m</label>
+              <label for="min">м</label>
               <input id="min" type="number" min="0" max="10"/>
-              <label for="sec">s</label>
+              <label for="sec">с</label>
               <input id="sec" type="number" min="0" max="59"/>
             </div>
         </div>
         <div class="setting_wrap">
-            <span>quantity</span>
+            <span>количество</span>
             <select name="quantity" id="quantity">
                 <option value="10">10</option>
                 <option value="16">16</option>
@@ -82,16 +82,17 @@ document.getElementById("settings").addEventListener("click", () => {
             </select>
         </div>
         <div class="setting_wrap">
-            <span>category</span>
+            <span>тема</span>
             <select name="category" id="category">
-                <option value="humo">humo</option>
-                <option value="cars">cars</option>
+                <option value="humo">хумо</option>
+                <option value="cars">машины</option>
             </select>
         </div>
     </div>
     `,
     showCancelButton: true,
-    confirmButtonText: "Save",
+    cancelButtonText: "Отмена",
+    confirmButtonText: "Сохранить",
     preConfirm: () => {
       const [minutes, seconds, quantity, category] = [
         document.getElementById("min").value,
@@ -190,6 +191,9 @@ function play(i) {
 
   if (winCounter === shuffled.length / 2) {
     timer.stopTimer();
+
+    launchConfetti();
+
     setTimeout(() => {
       Swal.fire({
         title: "Поздравляю, вы выиграли!",
@@ -199,7 +203,7 @@ function play(i) {
       }).then(() => {
         restart();
       });
-    }, 500);
+    }, 2000);
   }
 }
 
@@ -212,7 +216,7 @@ function restart() {
   shuffled = shuffleCards(images[0][[settings["category"]]].slice(0, settings["quantity"]));
   displayCards();
   addListenerToCards();
-  timer.resetTimer();
+  timer.resetTimer(settings?.timer?.minutes ?? 1,settings?.timer?.seconds ?? 0);
   if (timer.isTimerActive) {
     timer.stopTimer();
   }

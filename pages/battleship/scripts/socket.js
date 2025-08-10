@@ -2,6 +2,7 @@ import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.
 import { removeQueryParams } from "../../../utils/utils.js";
 import { getCoordinates, isLose, ships } from "./helpers.js";
 import { myField, reset } from "./main.js";
+import { launchConfetti } from "../../../utils/utils.js";
 
 // GLOBAL VARIABLES
 
@@ -39,47 +40,49 @@ const headerName = document.getElementById("chat-name");
 
 // CHAT
 
-chatBtn.addEventListener("click", ()=>{
+chatBtn.addEventListener("click", () => {
   chatContainer.classList.remove("hidden");
   chatBtn.classList.add("hidden");
   notification.textContent = "0";
   notification.classList.add("hidden");
 });
 
-closeChatBtn.addEventListener("click", ()=>{
+closeChatBtn.addEventListener("click", () => {
   chatContainer.classList.add("hidden");
   chatBtn.classList.remove("hidden");
 });
 
 sendMsgBtn.addEventListener("click", handleSendMsg);
-chatInput.addEventListener("focus", ()=>{
+chatInput.addEventListener("focus", () => {
   window.addEventListener("keydown", handleKeyPress);
 });
-chatInput.addEventListener("blur", ()=>{
+chatInput.addEventListener("blur", () => {
   window.removeEventListener("keydown", handleKeyPress);
 });
 
-function handleKeyPress(e){
-  if(e.key !== "Enter") return;
+function handleKeyPress(e) {
+  if (e.key !== "Enter") return;
   handleSendMsg();
 };
- 
-function handleSendMsg(){
-  const {value} = chatInput;
-  if(!value) return;
-  
+
+function handleSendMsg() {
+  const { value } = chatInput;
+  if (!value) return;
+
   const newMsg = document.createElement("div");
   newMsg.classList.add("msg");
   newMsg.classList.add("my_msg");
   newMsg.textContent = value;
   messages.appendChild(newMsg);
-  socket.send(JSON.stringify({type: "message", data: {
-    curRoomId: gameSessionData.sessionId,
-    value
-  }}));
+  socket.send(JSON.stringify({
+    type: "message", data: {
+      curRoomId: gameSessionData.sessionId,
+      value
+    }
+  }));
   messages.scrollTop = messages.scrollHeight
   chatInput.value = "";
-}; 
+};
 
 
 
@@ -362,7 +365,7 @@ socket.addEventListener("message", (ev) => {
       const readybtn = document.createElement("button");
       readybtn.classList.add("ready_btn");
       readybtn.textContent = "готов"
-      readybtn.onclick = ()=>{
+      readybtn.onclick = () => {
         socket.send(JSON.stringify({ type: "ready", data: gameSessionData.sessionId }));
         readyWrapper.innerHTML = "<span>готов<span/>";
       };
@@ -395,7 +398,7 @@ socket.addEventListener("message", (ev) => {
       generateOpponentField(name);
 
 
-      if(!audio){
+      if (!audio) {
         audio = new Audio("../../../assets/message.wav");
       };
 
@@ -477,11 +480,14 @@ socket.addEventListener("message", (ev) => {
       }
 
       if (status === "lose") {
-        Swal.fire({
-          icon: "success",
-          title: "Поздравляем, вы выиграли битву!",
-          text: "Вы смогли уничтожить весь флот противника",
-        }).then(() => reset());
+        launchConfetti();
+        setTimeout(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Поздравляем, вы выиграли битву!",
+            text: "Вы смогли уничтожить весь флот противника",
+          }).then(() => reset());
+        }, 2000)
 
       } else if (status === "destroy") {
         const { range, isVertical } = data.range;
@@ -525,13 +531,13 @@ socket.addEventListener("message", (ev) => {
       newMsg.textContent = data;
       messages.appendChild(newMsg);
       messages.scrollTop = messages.scrollHeight
-      
-      if(audio){
+
+      if (audio) {
         audio.play();
       };
 
-      if(chatContainer.classList.contains("hidden")){
-        const {textContent} = notification;
+      if (chatContainer.classList.contains("hidden")) {
+        const { textContent } = notification;
         notification.classList.remove("hidden");
         notification.textContent = (Number(textContent) || 0) + 1;
       };
