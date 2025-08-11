@@ -63,7 +63,7 @@ body {
   padding: 8px;
 }
 
-.field_small{
+.field_small {
   font-size: 2vw;
   border-top: 4px solid #fff;
   border-left: 4px solid #fff;
@@ -71,7 +71,7 @@ body {
   border-right: 4px solid #878787;
 }
 
-.field_medium{
+.field_medium {
   font-size: 1.5vw;
   border-top: 3px solid #fff;
   border-left: 3px solid #fff;
@@ -79,14 +79,13 @@ body {
   border-right: 3px solid #878787;
 }
 
-.field_hard{
+.field_hard {
   font-size: 1vw;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom: 2px solid #878787;
   border-right: 2px solid #878787;
 }
-
 
 .field {
   aspect-ratio: 1/1;
@@ -105,7 +104,7 @@ body {
 
 .open_field {
   border: 1px solid #bfbfbf;
-  background: #e2e2e2;
+  background: #e2e2e2 !important;
   pointer-events: none;
 }
 
@@ -228,6 +227,31 @@ body {
   height: 6px;
 }
 
+.hint_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.hint_btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  transition: filter 0.5s ease-in;
+}
+
+.hint_btn:hover img{
+  filter: drop-shadow(4px 4px 10px rgb(238, 255, 0));
+}
+
+.hint_btn img {
+  width: 42px;
+}
+
 @media screen and (max-width: 480px) {
   .mainsweeper_wrapper {
     display: flex;
@@ -327,7 +351,6 @@ body {
     border-bottom: 2px solid #878787;
     border-right: 2px solid #878787;
   }
-
 }
 
 @media screen and (max-width: 380px) {

@@ -9,6 +9,7 @@ export const levels = {
     size: width <= 480 ? "25px" : "45px",
     mineSize: width <= 480 ? "20px" : "35px",
     flagSize: width <= 480 ? "15px" : "35px",
+    hintAmount: 1,
   },
   medium: {
     label: "Средний",
@@ -18,6 +19,7 @@ export const levels = {
     size: width <= 480 && width > 400 ? "25px" : width <= 400 ? "20px" : "35px",
     mineSize: width <= 480 ? "15px" : "30px",
     flagSize: width <= 480 ? "15px" : "25px",
+    hintAmount: 3,
   },
   hard: {
     label: "Сложный",
@@ -27,26 +29,26 @@ export const levels = {
     size: width <= 480 && width > 385 ? "20px" : width < 385 ? "17px" : "25px",
     mineSize: width <= 480 ? "10px" : "20px",
     flagSize: width <= 480 ? "12px" : "20px",
+    hintAmount: 5,
   },
 };
-
 
 export const dropdownOptions = [
   {
     title: "Лёгкий",
-    value: "easy"
+    value: "easy",
   },
   {
     title: "Средний",
-    value: "medium"
+    value: "medium",
   },
   {
     title: "Сложный",
-    value: "hard"
-  }
-]
+    value: "hard",
+  },
+];
 
-window.level = levels['easy'];
+window.level = levels["easy"];
 
 export function getFields(level) {
   const rows = level.rows;
@@ -77,16 +79,16 @@ export function getFields(level) {
     const edgeCase = leftEdge.has(i)
       ? 1
       : rightEdge.has(i)
-        ? 2
-        : bottomLeft
-          ? 3
-          : bottomRight
-            ? 4
-            : topLeft
-              ? 5
-              : topRight
-                ? 6
-                : 7;
+      ? 2
+      : bottomLeft
+      ? 3
+      : bottomRight
+      ? 4
+      : topLeft
+      ? 5
+      : topRight
+      ? 6
+      : 7;
     return {
       id: i + 1,
       isMine: false,

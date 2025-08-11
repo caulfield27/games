@@ -1,67 +1,70 @@
 <!DOCTYPE html>
 <html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сапёр</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
+    <link rel="stylesheet" href="/components/dropdown/dropdown.css" />
+    <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css" />
+    <link rel="stylesheet" href="/global.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Сапёр</title>
-  <link rel="stylesheet" href="index.css" />
-  <link rel="stylesheet" href="/lib/sweetalert2.min.css" />
-  <link rel="stylesheet" href="/components/dropdown/dropdown.css" />
-  <link rel="stylesheet" href="/components/backToMenuButton/backToMenu.css">
-  <link rel="stylesheet" href="/global.css">
-</head>
-
-<body>
-  <back-to-menu></back-to-menu>
-  <div class="pages_container">
-    <div class="mainsweeper_wrapper">
-      <div class="my_dropdown_wrapper">
-        <my-dropdown id="my_dropdown" initialValue="medium"></my-dropdown>
-        <div></div>
-      </div>
-      <div class="game_board" id="board">
-        <div class="tablo">
-          <div class="tablo_content">
-            <div class="tablo_flag">
-              <div class="clock">
-                <div class="digit" id="first_num"></div>
-                <div class="digit" id="second_num"></div>
-                <div class="digit" id="third_num"></div>
+  <body>
+    <back-to-menu></back-to-menu>
+    <div class="pages_container">
+      <div class="mainsweeper_wrapper">
+        <div class="my_dropdown_wrapper">
+          <my-dropdown id="my_dropdown" initialValue="medium"></my-dropdown>
+          <div id="hint_wrapper" class="hint_wrapper hidden">
+            <span id="hint-amount"></span>
+            <button class="hint_btn" id="hint_btn">
+              <img src="/assets/hint.png" alt="hint" />
+            </button>
+          </div>
+        </div>
+        <div class="game_board" id="board">
+          <div class="tablo">
+            <div class="tablo_content">
+              <div class="tablo_flag">
+                <div class="clock">
+                  <div class="digit" id="first_num"></div>
+                  <div class="digit" id="second_num"></div>
+                  <div class="digit" id="third_num"></div>
+                </div>
               </div>
-            </div>
-            <div class="smile_container" id="smile" role="button">
-              <svg width="80" height="80" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="yellow" stroke="black" stroke-width="3" />
-                <rect x="20" y="30" width="20" height="10" fill="black" />
-                <rect x="60" y="30" width="20" height="10" fill="black" />
-                <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="3" />
-                <path d="M30 65 Q50 85, 70 65" stroke="black" stroke-width="3" fill="none" />
-              </svg>
-            </div>
-            <div class="timer_container">
-              <div class="clock">
-                <div class="digit" id="first_timer"></div>
-                <div class="digit" id="second_timer"></div>
-                <div class="digit" id="third_timer"></div>
+              <div class="smile_container" id="smile" role="button">
+                <svg width="80" height="80" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="yellow" stroke="black" stroke-width="3" />
+                  <rect x="20" y="30" width="20" height="10" fill="black" />
+                  <rect x="60" y="30" width="20" height="10" fill="black" />
+                  <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="3" />
+                  <path d="M30 65 Q50 85, 70 65" stroke="black" stroke-width="3" fill="none" />
+                </svg>
+              </div>
+              <div class="timer_container">
+                <div class="clock">
+                  <div class="digit" id="first_timer"></div>
+                  <div class="digit" id="second_timer"></div>
+                  <div class="digit" id="third_timer"></div>
+                </div>
               </div>
             </div>
           </div>
+          <div id="container"></div>
         </div>
-        <div id="container"></div>
       </div>
     </div>
-  </div>
 
-  <script src="scripts/main.js" type="module"></script>
-  <script src="scripts/data.js" type="module"></script>
-  <script src="scripts/digits.js" type="module"></script>
-  <script src="scripts/drawSVG.js" type="module"></script>
-  <script src="/lib/sweetalert2.min.js"></script>
-  <script src="/components/dropdown/dropdown.js" defer></script>
-  <script src="/components/backToMenuButton/backToMenu.js" defer></script>
-  <script src="/utils/utils.js" type="module"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-</body>
-
+    <script src="scripts/main.js" type="module"></script>
+    <script src="scripts/data.js" type="module"></script>
+    <script src="scripts/digits.js" type="module"></script>
+    <script src="scripts/drawSVG.js" type="module"></script>
+    <script src="/lib/sweetalert2.min.js"></script>
+    <script src="/components/dropdown/dropdown.js" defer></script>
+    <script src="/components/backToMenuButton/backToMenu.js" defer></script>
+    <script src="/utils/utils.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  </body>
 </html>

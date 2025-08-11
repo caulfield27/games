@@ -17,14 +17,40 @@ let flagsCounter = level.mines;
 const smile = document.getElementById("smile");
 const container = document.getElementById("container");
 const options = document.getElementById("my_dropdown");
+const hintBtn = document.getElementById("hint_btn");
 const flagsCounterDigits = [
   document.getElementById("first_num"),
   document.getElementById("second_num"),
   document.getElementById("third_num"),
 ];
+const hintAmount = document.getElementById("hint-amount");
+const hintContainer = document.getElementById("hint_wrapper");
+hintAmount.textContent = level.hintAmount;
 
 // STRAIGHT LISTENERS
 
+hintBtn.addEventListener("click", () => {
+  const { textContent } = hintAmount;
+  const newHintAmount = Number(textContent || 1) - 1;
+  hintAmount.textContent = newHintAmount;
+  if (newHintAmount === 0) {
+    hintBtn.style.pointerEvents = "none";
+  }
+
+  const buttons = container.children;
+  let hintIndex = null;
+  while (!hintIndex) {
+    const randomIndex = Math.floor(Math.random() * fields.length);
+    const { isMine, isFlaged, isOpen } = fields[randomIndex];
+    if (!isMine && !isFlaged && !isOpen) {
+      hintIndex = randomIndex;
+    }
+  }
+  const saveBtn = buttons[hintIndex];
+  if (saveBtn) {
+    saveBtn.style.background = "#78ff78";
+  }
+});
 smile.addEventListener("click", restart);
 options.setAttribute("options", JSON.stringify(dropdownOptions));
 options.setAttribute("value", level?.label ?? "Лёгкий");
@@ -192,6 +218,9 @@ function restart() {
   isGameOver = false;
   flagsCounter = level.mines;
   rows = level.rows;
+  hintAmount.textContent = level.hintAmount;
+  hintBtn.style.pointerEvents = "";
+  hintContainer.classList.add("hidden");
   window.minesweeperSeconds = 0;
   smile.innerHTML = smileIsAlive();
   if (intervalCancel) {
@@ -242,6 +271,7 @@ function setField() {
         isGameStart = true;
         intervalCancel = startTimer(() => gameOver(null, "time"));
         generateMines(buttonInd);
+        hintContainer.classList.remove("hidden");
       }
 
       if (fields[buttonInd].isOpen || fields[buttonInd].isFlaged || isGameOver) return;
@@ -257,22 +287,6 @@ function setField() {
       }
 
       const minesAround = checkField(buttonInd, buttons);
-      if (minesAround) {
-        buttons[buttonInd].innerHTML = minesAround;
-        switch (minesAround) {
-          case 1:
-            buttons[buttonInd].style.color = "#0B24FB";
-            break;
-          case 2:
-            buttons[buttonInd].style.color = "#0E7A11";
-            break;
-          case 3:
-            buttons[buttonInd].style.color = "#852123";
-            break;
-          default:
-            buttons[buttonInd].style.color = "#FC0D1B";
-        }
-      }
 
       if (isWin(fields, level.mines)) {
         if (intervalCancel) {
@@ -293,6 +307,23 @@ function setField() {
             }
           });
         }, [2000]);
+      }
+
+      if (minesAround) {
+        buttons[buttonInd].innerHTML = minesAround;
+        switch (minesAround) {
+          case 1:
+            buttons[buttonInd].style.color = "#0B24FB";
+            break;
+          case 2:
+            buttons[buttonInd].style.color = "#0E7A11";
+            break;
+          case 3:
+            buttons[buttonInd].style.color = "#852123";
+            break;
+          default:
+            buttons[buttonInd].style.color = "#FC0D1B";
+        }
       }
     });
   });
