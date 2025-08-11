@@ -47,18 +47,20 @@ function render() {
   defineVariables();
 }
 
-function defineVariables(){
+function defineVariables() {
   container.style.setProperty("--cols", level.cols);
   container.style.setProperty("--rows", level.rows);
   container.style.setProperty("--size", level.size);
 }
 
 function generateMines(firstInd) {
-  // GENERATE MINES ON GAME START
+  const { edgeCase } = fields[firstInd];
+  const saveFields = new Set(getNeighbours(edgeCase, firstInd));
+  saveFields.add(firstInd);
   const mines = new Set();
   while (mines.size !== level.mines) {
     const minePosition = Math.floor(Math.random() * fields.length);
-    if (minePosition === firstInd) continue;
+    if (saveFields.has(minePosition)) continue;
     if (!mines.has(minePosition)) {
       mines.add(minePosition);
       fields[minePosition] = { ...fields[minePosition], isMine: true };
@@ -67,7 +69,6 @@ function generateMines(firstInd) {
 }
 
 function isWin(fields, mines) {
-  // CHECKING WIN CONDITION
   let openCounter = 0;
   for (const field of fields) {
     if (field.isOpen) {
@@ -113,43 +114,7 @@ function checkField(i, buttons) {
   fields[i].isOpen = true;
 
   const { edgeCase } = fields[i];
-  let neighbours = null;
-
-  switch (edgeCase) {
-    case 1:
-      neighbours = [i + 1, i - rows, i + rows, i - rows + 1, i + rows + 1];
-      break;
-    case 2:
-      neighbours = [i - 1, i - rows, i + rows, i - rows - 1, i + rows - 1];
-      break;
-    case 3:
-      neighbours = [i + 1, i + rows, i + rows + 1];
-      break;
-    case 4:
-      neighbours = [i - 1, i + rows, i + rows - 1];
-      break;
-    case 5:
-      neighbours = [i + 1, i - rows, i - rows + 1];
-      break;
-    case 6:
-      neighbours = [i - 1, i - rows, i - rows - 1];
-      break;
-    case 7:
-      neighbours = [
-        i + 1,
-        i - 1,
-        i - rows,
-        i + rows,
-        i - rows + 1,
-        i - rows - 1,
-        i + rows + 1,
-        i + rows - 1,
-      ];
-      break;
-    default:
-      neighbours = [];
-      break;
-  }
+  const neighbours = getNeighbours(edgeCase, i);
 
   let counter = 0;
   const validNeighbours = [];
@@ -190,6 +155,36 @@ function checkField(i, buttons) {
   }
 }
 
+function getNeighbours(edgeCase, pos) {
+  switch (edgeCase) {
+    case 1:
+      return [pos + 1, pos - rows, pos + rows, pos - rows + 1, pos + rows + 1];
+    case 2:
+      return [pos - 1, pos - rows, pos + rows, pos - rows - 1, pos + rows - 1];
+    case 3:
+      return [pos + 1, pos + rows, pos + rows + 1];
+    case 4:
+      return [pos - 1, pos + rows, pos + rows - 1];
+    case 5:
+      return [pos + 1, pos - rows, pos - rows + 1];
+    case 6:
+      return [pos - 1, pos - rows, pos - rows - 1];
+    case 7:
+      return [
+        pos + 1,
+        pos - 1,
+        pos - rows,
+        pos + rows,
+        pos - rows + 1,
+        pos - rows - 1,
+        pos + rows + 1,
+        pos + rows - 1,
+      ];
+    default:
+      return [];
+  }
+}
+
 function restart() {
   // RESET ALL STATES
   fields = getFields(level);
@@ -210,7 +205,9 @@ function generateFields(filedsAmount) {
   let html = "";
   for (let i = 0; i < filedsAmount; i++) {
     const { label } = level;
-    html += `<button class="field ${label === "Лёгкий" ? "field_small" : label === "Средний" ? "field_medium" : "field_hard"}" value="${i}"></button>`;
+    html += `<button class="field ${
+      label === "Лёгкий" ? "field_small" : label === "Средний" ? "field_medium" : "field_hard"
+    }" value="${i}"></button>`;
   }
 
   return html;
@@ -241,6 +238,12 @@ function setField() {
     });
 
     button.addEventListener("click", (event) => {
+      if (!isGameStart) {
+        isGameStart = true;
+        intervalCancel = startTimer(() => gameOver(null, "time"));
+        generateMines(buttonInd);
+      }
+
       if (fields[buttonInd].isOpen || fields[buttonInd].isFlaged || isGameOver) return;
 
       if (fields[buttonInd].isMine) {
@@ -251,12 +254,6 @@ function setField() {
         }
         gameOver(buttonInd);
         return;
-      }
-
-      if (!isGameStart) {
-        isGameStart = true;
-        intervalCancel = startTimer(() => gameOver(null, "time"));
-        generateMines(buttonInd);
       }
 
       const minesAround = checkField(buttonInd, buttons);
@@ -280,7 +277,7 @@ function setField() {
       if (isWin(fields, level.mines)) {
         if (intervalCancel) {
           intervalCancel();
-        };
+        }
 
         launchConfetti();
 

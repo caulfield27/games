@@ -7,6 +7,7 @@ import { launchConfetti } from "../../../utils/utils.js";
 // GLOBAL VARIABLES
 
 const socket = new WebSocket("wss://games-online-service.onrender.com");
+// const socket = new WebSocket("ws://localhost:3000");
 let audio = null;
 let pending = false;
 
