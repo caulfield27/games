@@ -19,7 +19,7 @@ search.addEventListener("focus", (event) => {
   event.target.placeholder = "";
 });
 search.addEventListener("blur", (event) => {
-  event.target.placeholder = "Search";
+  event.target.placeholder = "Поиск...";
 });
 search.addEventListener("input", (event) => {
   const { value } = event.target;
