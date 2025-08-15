@@ -8,6 +8,7 @@ body {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: auto;
   gap: 20px;
+  overflow: hidden;
 }
 
 .my_dropdown_wrapper {
@@ -344,12 +345,22 @@ body {
     height: 5px;
   }
 
-  .field {
-    font-size: 16px;
+  .field{
+    font-size: 16px
+  }
+
+  .field_small{
     border-top: 2px solid #fff;
     border-left: 2px solid #fff;
     border-bottom: 2px solid #878787;
     border-right: 2px solid #878787;
+  }
+
+  .field_medium, .field_hard{
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-bottom: 1px solid #878787;
+    border-right: 1px solid #878787;
   }
 }
 
