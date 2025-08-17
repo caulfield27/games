@@ -7,11 +7,43 @@ let cards;
 const tagsSet = new Set();
 const tagsContainer = document.getElementById("tags_container");
 const search = document.getElementById("main_page_search");
+let isPwaModalShown = false;
 
 // INIT UI
 
 handleDocumentLoading(render);
 
+
+// REGISTR SW
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("../../sw.js").then(
+      reg => console.log('service worker успешно зарегистрирован: ', reg.scope)
+    ).catch(err => console.log(err))
+  })
+}
+
+window.addEventListener("beforeinstallprompt", (event) =>{
+  event.preventDefault();
+  
+  if(isPwaModalShown){
+    return;
+  };
+
+  isPwaModalShown = true;
+  Swal.fire({
+    // icon: "info",
+    title: "Установить приложение",
+    text: "установите наше приложение на свой телефон и играйте офлайн в любое время.",
+    showCancelButton: true,
+    cancelButtonText: "продолжить",
+    confirmButtonText: "установить"
+  }).then((res)=>{
+    if(res?.isConfirmed){
+      event.prompt();
+    };
+  }) 
+})
 
 // HANDLE FILTERS
 

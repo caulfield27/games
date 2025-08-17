@@ -38,6 +38,7 @@ const sendMsgBtn = document.getElementById("send");
 const messages = document.getElementById("messages");
 export const notification = document.getElementById("not");
 const headerName = document.getElementById("chat-name");
+export let readySpan = null;
 
 // CHAT
 
@@ -368,7 +369,10 @@ socket.addEventListener("message", (ev) => {
       readybtn.textContent = "готов"
       readybtn.onclick = () => {
         socket.send(JSON.stringify({ type: "ready", data: gameSessionData.sessionId }));
-        readyWrapper.innerHTML = "<span>готов<span/>";
+        readySpan = document.createElement("span");
+        readySpan.textContent = "готов";
+        readyWrapper.removeChild(readybtn);
+        readyWrapper.appendChild(readySpan);
       };
       readyWrapper.appendChild(readybtn);
 

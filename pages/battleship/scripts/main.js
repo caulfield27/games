@@ -1,7 +1,7 @@
 import { handleDocumentLoading } from "../../../utils/utils.js";
 import { displayShip, ships } from "../scripts/helpers.js";
 import { nanoid } from "https://cdn.jsdelivr.net/npm/nanoid@4.0.2/index.browser.js";
-import { elementsArray, gameSessionData, checkQuery, sendInvite, chatBtn, chatContainer, notification } from "./socket.js";
+import { elementsArray, gameSessionData, checkQuery, sendInvite, chatBtn, chatContainer, notification, readySpan } from "./socket.js";
 
 // INIT SCRIPT
 
@@ -45,7 +45,7 @@ let directionsHash = {
 };
 
 // STRAIGHT LISTENERS  
-shuffleBtn.addEventListener("click",arrangeShips)
+shuffleBtn.addEventListener("click", arrangeShips)
 document.getElementById("copy-btn").addEventListener("click", handleCopyLink);
 
 // FUNCTIONS
@@ -177,6 +177,10 @@ export function reset() {
   const opReadyWrapper = document.getElementById("opp-ready-wrapper");
   opReadyWrapper && opReadyWrapper.remove();
   myReadyWrapper.style.display = "none";
+
+  if (readySpan) {
+    myReadyWrapper.removeChild(readySpan);
+  }
 
   arrangeShips();
 }
