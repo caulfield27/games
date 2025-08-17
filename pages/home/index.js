@@ -34,7 +34,6 @@ window.addEventListener("beforeinstallprompt", (event) =>{
   Swal.fire({
     // icon: "info",
     title: "Установить приложение",
-    text: "установите наше приложение на свой телефон и играйте офлайн в любое время.",
     showCancelButton: true,
     cancelButtonText: "продолжить",
     confirmButtonText: "установить"

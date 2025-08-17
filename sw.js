@@ -15,7 +15,9 @@ const urlsToCache = [
     "/minesweeper.html",
     "/battleship.html",
     "/assets/logo192x192.png",
-    "/assets/logo512x512.png"
+    "/assets/logo512x512.png",
+    "/lib/sweetalert2.min.css",
+    "/lib/sweetalert2.min.js"
 ];
 
 
