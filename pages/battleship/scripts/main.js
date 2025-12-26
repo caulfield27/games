@@ -59,11 +59,10 @@ let inviteLink = null;
 
 buttons.forEach((btn, idx) => {
   btn.addEventListener("click", () => {
-    let isRight = switcher.classList.contains("right");
+    const isRight = switcher.classList.contains("right");
     if ((isRight && idx === 1) || (!isRight && idx == 0)) return;
 
     switcher.classList.toggle("right", idx === 1);
-    isRight = switcher.classList.contains("right");
     if (isRight) {
       findGameBtn.style.display = "none";
       inviteBlock.style.display = "flex";
